@@ -1,0 +1,59 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Khand:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-mist: #ffffff;             /* Main Background: White */
+  --color-mist-light: #f0fdf4;       /* Secondary Background: Very light leaf green/white wash */
+  --color-tea: #15803d;              /* Primary Accent: Leaf green */
+  --color-tea-light: #22c55e;        /* Secondary Accent: Lighter leaf green */
+  --color-rust: #0ea5e9;             /* Highlights/Buttons: Sky blue */
+  --color-rust-light: #38bdf8;       /* Hover states: Lighter sky blue */
+  --color-marigold: #0284c7;         /* Supporting Accent: Darker sky blue */
+  --color-marigold-light: #e0f2fe;   /* Background accents: Light sky blue */
+  --color-dawn: #bae6fd;             /* Dawn gradient: Pale sky blue */
+  --color-ink: #000000;              /* Text/Elements: Black */
+
+  --font-display: "Fraunces", serif;
+  --font-signage: "Khand", sans-serif;
+  --font-body: "Work Sans", sans-serif;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: var(--color-mist);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-marigold);
+  color: var(--color-ink);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+.font-signage {
+  font-family: var(--font-signage);
+}
+
+/* Railway-signage style letterspaced label */
+.signage {
+  font-family: var(--font-signage);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
