@@ -9,6 +9,9 @@ export default function CloudCurtain() {
   const videoRightRef = useRef<HTMLVideoElement>(null);
   const introTextRef = useRef<HTMLDivElement>(null);
 
+  const welcomeText = "Welcome to the Queen of Hills";
+  const darjeelingText = "Darjeeling";
+
   useEffect(() => {
     // Sync the video playtimes
     if (videoLeftRef.current && videoRightRef.current) {
@@ -49,6 +52,46 @@ export default function CloudCurtain() {
         .to(cloudRightRef.current, { width: "0vw", ease: "power1.inOut" }, 0)
         .to(introTextRef.current, { opacity: 0, y: -60, scale: 0.95, ease: "power1.inOut" }, 0);
 
+      // Blink cursors
+      gsap.to(".welcome-cursor", {
+        opacity: 0,
+        duration: 0.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "steps(1)"
+      });
+      gsap.to(".darjeeling-cursor", {
+        opacity: 0,
+        duration: 0.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "steps(1)"
+      });
+
+      // Typing animation timeline
+      const typingTl = gsap.timeline();
+      gsap.set(".darjeeling-cursor", { display: "none" });
+
+      typingTl
+        .to(".welcome-char", {
+          opacity: 1,
+          duration: 0.01,
+          stagger: 0.05,
+          ease: "none",
+        })
+        .to(".welcome-cursor", {
+          display: "none",
+          duration: 0,
+        })
+        .set(".darjeeling-cursor", {
+          display: "inline-block",
+        })
+        .to(".darjeeling-char", {
+          opacity: 1,
+          duration: 0.01,
+          stagger: 0.08,
+          ease: "none",
+        });
     });
 
     return () => ctx.revert();
@@ -98,14 +141,28 @@ export default function CloudCurtain() {
           ref={introTextRef}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
         >
-          <span className="signage text-white text-3xl tracking-[0.3em] uppercase mb-3 ">
-            Welcome to the Queen of Hills
+          <span className="signage text-white text-3xl tracking-[0.3em] uppercase mb-3 inline-flex items-center justify-center">
+            <span>
+              {welcomeText.split("").map((char, index) => (
+                <span key={index} className="welcome-char opacity-0">
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              ))}
+            </span>
+            <span className="welcome-cursor w-[2px] h-[1em] bg-white ml-1 inline-block"></span>
           </span>
           <h2
-            className="font-display font-extrabold text-6xl sm:text-8xl lg:text-[9rem] text-white max-w-4xl leading-none tracking-tighter uppercase"
+            className="font-display font-extrabold text-6xl sm:text-8xl lg:text-[9rem] text-white max-w-4xl leading-none tracking-tighter uppercase flex items-center justify-center"
             style={{ textShadow: "0 10px 30px rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.2)" }}
           >
-            Darjeeling
+            <span>
+              {darjeelingText.split("").map((char, index) => (
+                <span key={index} className="darjeeling-char opacity-0">
+                  {char === " " ? "\u00A0" : char}
+                </span>
+              ))}
+            </span>
+            <span className="darjeeling-cursor w-[6px] h-[0.9em] bg-white ml-2 inline-block"></span>
           </h2>
         </div>
       </div>
