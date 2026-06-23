@@ -52,6 +52,18 @@ export default function Hero() {
       ref={sectionRef}
       className="relative flex h-[100vh] min-h-[640px] w-full items-center justify-center overflow-hidden bg-black"
     >
+      {/* Logo & Text in Top Left Corner */}
+      <div className="absolute top-6 left-6 z-20 flex items-center gap-3">
+        <img
+          src="/logo.jpg"
+          alt="1Darjeeling Logo"
+          className="h-10 w-10 rounded-full object-cover border border-white/20"
+        />
+        <span className="font-googlesansflex text-xl font-bold tracking-wider text-white drop-shadow-md">
+          1Darjeeling
+        </span>
+      </div>
+
       {/* Background Image: hero.jpg */}
       <img
         ref={bgRef}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+/* import { useEffect, useState } from "react";
 
 const links = [
   { href: "#attractions", label: "Attractions" },
@@ -95,3 +95,4 @@ export default function Navbar() {
     </header>
   );
 }
+ */
