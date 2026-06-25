@@ -1,12 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "../lib/gsap";
 import ExploreSlider from "./ExploreSlider";
+
+const WORDS = ["Hiking", "Lamahatta", "Kurseong", "Mirik", "Sonada"];
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLVideoElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const fgRef = useRef<HTMLImageElement>(null);
+
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -46,6 +52,37 @@ export default function Hero() {
 
     return () => ctx.revert();
   }, []);
+
+  useEffect(() => {
+    let timer: number;
+    const currentWord = WORDS[wordIndex];
+
+    if (!isDeleting) {
+      // Typing character-by-character
+      if (currentText.length < currentWord.length) {
+        timer = window.setTimeout(() => {
+          setCurrentText(currentWord.slice(0, currentText.length + 1));
+        }, 120); // speed of typing
+      } else {
+        // Word is fully typed, wait for 3 seconds before deleting
+        timer = window.setTimeout(() => {
+          setIsDeleting(true);
+        }, 3000);
+      }
+    } else {
+      // Deleting character-by-character
+      if (currentText.length > 0) {
+        timer = window.setTimeout(() => {
+          setCurrentText(currentWord.slice(0, currentText.length - 1));
+        }, 60); // speed of deleting
+      } else {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % WORDS.length);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, wordIndex]);
 
   return (
     <section
@@ -92,7 +129,10 @@ export default function Hero() {
           <span>I</span>
           <span className="absolute left-[calc(100%+1.25rem)] sm:left-[calc(100%+1.75rem)] whitespace-nowrap text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-googlesansflex tracking-normal normal-case flex items-center gap-1.5 sm:gap-2 text-white">
             <span>❤️</span>
-            <span className="font-semibold">Hiking</span>
+            <span className="font-semibold flex items-center">
+              {currentText}
+              <span className="animate-pulse ml-0.5 font-light">|</span>
+            </span>
           </span>
         </div>
         <span>N</span>

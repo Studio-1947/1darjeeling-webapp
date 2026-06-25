@@ -1,4 +1,4 @@
-import { useLenis } from "./hooks/useLenis";
+
 /* import Navbar from "./components/Navbar"; */
 import CloudCurtain from "./components/CloudCurtain";
 import Hero from "./components/Hero";
@@ -12,7 +12,7 @@ import TravelTips from "./components/TravelTips";
 import Footer from "./components/Footer";
 
 function App() {
-  useLenis();
+
 
   return (
     <div className="bg-mist">
