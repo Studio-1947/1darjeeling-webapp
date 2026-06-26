@@ -1,6 +1,6 @@
 
 /* import Navbar from "./components/Navbar"; */
-import CloudCurtain from "./components/CloudCurtain";
+/* import CloudCurtain from "./components/CloudCurtain"; */
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Attractions from "./components/Attractions";
@@ -18,7 +18,7 @@ function App() {
     <div className="bg-mist">
       {/* <Navbar /> */}
       <main>
-        <CloudCurtain />
+       {/*  <CloudCurtain /> */}
         <Hero />
         <About />
         <Attractions />
