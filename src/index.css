@@ -1,73 +1,208 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Khand:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap");
-@import "@fontsource-variable/google-sans-flex";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
 @theme {
-  --color-mist: #ffffff;             /* Main Background: White */
-  --color-mist-light: #f0fdf4;       /* Secondary Background: Very light leaf green/white wash */
-  --color-tea: #15803d;              /* Primary Accent: Leaf green */
-  --color-tea-light: #22c55e;        /* Secondary Accent: Lighter leaf green */
-  --color-rust: #0ea5e9;             /* Highlights/Buttons: Sky blue */
-  --color-rust-light: #38bdf8;       /* Hover states: Lighter sky blue */
-  --color-marigold: #0284c7;         /* Supporting Accent: Darker sky blue */
-  --color-marigold-light: #e0f2fe;   /* Background accents: Light sky blue */
-  --color-dawn: #bae6fd;             /* Dawn gradient: Pale sky blue */
-  --color-ink: #000000;              /* Text/Elements: Black */
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-ink: #000000;
+  --color-body-text: #5e5e5e;
+  --color-mute: #afafaf;
+  --color-hairline-mid: #4b4b4b;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #efefef;
+  --color-canvas-softer: #f3f3f3;
+  --color-surface-pressed: #e2e2e2;
+  --color-link: #0000ee;
+  --color-on-dark: #ffffff;
+  --color-black-elevated: #282828;
 
-  --font-display: "Fraunces", serif;
-  --font-signage: "Khand", sans-serif;
-  --font-body: "Work Sans", sans-serif;
-  --font-googlesansflex: "Google Sans Flex Variable", sans-serif;
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
+  --font-text: "Inter", system-ui, -apple-system, sans-serif;
+
+  --radius-pill: 999px;
+  --radius-pill-tab: 36px;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+
+  --spacing-xxs: 4px;
+  --spacing-xs: 6px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
 }
 
-html {
-  scroll-behavior: auto;
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+/* Custom Base / Global rules */
+body {
+  font-family: var(--font-text);
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-feature-settings: "ss01" on;
+}
+
+/* Component Styles from DESIGN.md */
+
+.display-xxl {
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 64px;
+}
+
+.display-xl {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 44px;
+}
+
+.display-lg {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.display-md {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+}
+
+.display-sm {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+}
+
+/* Scrollbar styling for horizontal scroll elements */
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-body {
-  background-color: var(--color-mist);
-  color: var(--color-ink);
-  font-family: var(--font-body);
-  overflow-x: hidden;
-  /* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-::selection {
-  background-color: var(--color-marigold);
+/* Custom interactive pill styling */
+.btn-pill-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  border-radius: var(--radius-pill);
+  padding: var(--spacing-md) var(--spacing-xl);
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pill-primary:hover {
+  background-color: var(--color-black-elevated);
+}
+
+.btn-pill-primary:active {
+  background-color: var(--color-surface-pressed);
+  color: var(--color-primary);
+}
+
+.btn-pill-secondary {
+  background-color: var(--color-canvas);
   color: var(--color-ink);
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  border-radius: var(--radius-pill);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: 1px solid var(--color-surface-pressed);
+  transition: all 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
-.font-signage {
-  font-family: var(--font-signage);
+.btn-pill-secondary:hover {
+  background-color: var(--color-canvas-soft);
 }
 
-/* Railway-signage style letterspaced label */
-.signage {
-  font-family: var(--font-signage);
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+.btn-pill-subtle {
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  border-radius: var(--radius-pill);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+.btn-pill-subtle:hover {
+  background-color: var(--color-surface-pressed);
+}
+
+.btn-large-rounded {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-text);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-large-rounded:hover {
+  background-color: var(--color-black-elevated);
+}
+
+/* Card classes from DESIGN.md */
+.card-content {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  border: 1px solid var(--color-canvas-soft);
+}
+
+.card-elevated {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 4px 16px 0px;
+  border: 1px solid transparent;
+}
+
+.card-soft-tinted {
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  border: none;
 }
