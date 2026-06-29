@@ -2,18 +2,33 @@
 
 @import "tailwindcss";
 
+:root {
+  --app-primary: #000000;
+  --app-primary-dark: #222222;
+  --app-ink: #222222;
+  --app-body-text: #6b7280;
+  --app-mute: #9ca3af;
+  --app-hairline: #e5e7eb;
+  --app-canvas: #ffffff;
+  --app-canvas-soft: #f9fafb;
+  --app-canvas-softer: #f3f4f6;
+  --app-surface-pressed: #f3f4f6;
+  --app-link: #111827;
+}
+
+
 @theme {
-  --color-primary: #000000;
-  --color-primary-dark: #222222;
-  --color-ink: #222222;
-  --color-body-text: #717171;
-  --color-mute: #B0B0B0;
-  --color-hairline: #DDDDDD;
-  --color-canvas: #FFFFFF;
-  --color-canvas-soft: #F7F7F7;
-  --color-canvas-softer: #EBEBEB;
-  --color-surface-pressed: #F0F0F0;
-  --color-link: #222222;
+  --color-primary: var(--app-primary);
+  --color-primary-dark: var(--app-primary-dark);
+  --color-ink: var(--app-ink);
+  --color-body-text: var(--app-body-text);
+  --color-mute: var(--app-mute);
+  --color-hairline: var(--app-hairline);
+  --color-canvas: var(--app-canvas);
+  --color-canvas-soft: var(--app-canvas-soft);
+  --color-canvas-softer: var(--app-canvas-softer);
+  --color-surface-pressed: var(--app-surface-pressed);
+  --color-link: var(--app-link);
 
   --font-display: "Inter", system-ui, -apple-system, sans-serif;
   --font-text: "Inter", system-ui, -apple-system, sans-serif;
