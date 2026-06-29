@@ -1,39 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
 @theme {
   --color-primary: #000000;
-  --color-on-primary: #ffffff;
-  --color-ink: #000000;
-  --color-body-text: #5e5e5e;
-  --color-mute: #afafaf;
-  --color-hairline-mid: #4b4b4b;
-  --color-canvas: #ffffff;
-  --color-canvas-soft: #efefef;
-  --color-canvas-softer: #f3f3f3;
-  --color-surface-pressed: #e2e2e2;
-  --color-link: #0000ee;
-  --color-on-dark: #ffffff;
-  --color-black-elevated: #282828;
+  --color-primary-dark: #222222;
+  --color-ink: #222222;
+  --color-body-text: #717171;
+  --color-mute: #B0B0B0;
+  --color-hairline: #DDDDDD;
+  --color-canvas: #FFFFFF;
+  --color-canvas-soft: #F7F7F7;
+  --color-canvas-softer: #EBEBEB;
+  --color-surface-pressed: #F0F0F0;
+  --color-link: #222222;
 
   --font-display: "Inter", system-ui, -apple-system, sans-serif;
   --font-text: "Inter", system-ui, -apple-system, sans-serif;
 
   --radius-pill: 999px;
-  --radius-pill-tab: 36px;
-  --radius-xl: 16px;
-  --radius-lg: 12px;
-  --radius-md: 8px;
-
-  --spacing-xxs: 4px;
-  --spacing-xs: 6px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 20px;
-  --spacing-2xl: 24px;
-  --spacing-3xl: 32px;
+  --radius-xl: 12px;
+  --radius-lg: 8px;
+  --radius-md: 4px;
 }
 
 /* Custom Base / Global rules */
@@ -48,41 +36,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-feature-settings: "ss01" on;
-}
-
-/* Component Styles from DESIGN.md */
-
-.display-xxl {
-  font-size: 52px;
-  font-weight: 700;
-  line-height: 64px;
-}
-
-.display-xl {
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 44px;
-}
-
-.display-lg {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 40px;
-}
-
-.display-md {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 32px;
-}
-
-.display-sm {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 28px;
+  color: var(--color-ink);
 }
 
 /* Scrollbar styling for horizontal scroll elements */
@@ -94,115 +48,62 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: none;
 }
 
-/* Custom interactive pill styling */
-.btn-pill-primary {
+/* Airbnb style primary button */
+.btn-airbnb-primary {
   background-color: var(--color-primary);
-  color: var(--color-on-primary);
+  color: var(--color-canvas);
   font-family: var(--font-text);
   font-size: 16px;
-  font-weight: 500;
-  line-height: 20px;
-  border-radius: var(--radius-pill);
-  padding: var(--spacing-md) var(--spacing-xl);
-  transition: background-color 0.15s ease;
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  padding: 14px 24px;
+  transition: background-color 0.2s ease;
   cursor: pointer;
   border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
-.btn-pill-primary:hover {
-  background-color: var(--color-black-elevated);
+.btn-airbnb-primary:hover {
+  background-color: var(--color-primary-dark);
 }
 
-.btn-pill-primary:active {
-  background-color: var(--color-surface-pressed);
-  color: var(--color-primary);
-}
-
-.btn-pill-secondary {
+/* Airbnb style secondary outline button */
+.btn-airbnb-secondary {
   background-color: var(--color-canvas);
   color: var(--color-ink);
   font-family: var(--font-text);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 20px;
-  border-radius: var(--radius-pill);
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: 1px solid var(--color-surface-pressed);
-  transition: all 0.15s ease;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-pill-secondary:hover {
-  background-color: var(--color-canvas-soft);
-}
-
-.btn-pill-subtle {
-  background-color: var(--color-canvas-soft);
-  color: var(--color-ink);
-  font-family: var(--font-text);
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 20px;
-  border-radius: var(--radius-pill);
-  padding: var(--spacing-md) var(--spacing-lg);
-  border: none;
-  transition: background-color 0.15s ease;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  padding: 10px 16px;
+  border: 1px solid var(--color-ink);
+  transition: background-color 0.2s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
-.btn-pill-subtle:hover {
-  background-color: var(--color-surface-pressed);
-}
-
-.btn-large-rounded {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  font-family: var(--font-text);
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.btn-large-rounded:hover {
-  background-color: var(--color-black-elevated);
-}
-
-/* Card classes from DESIGN.md */
-.card-content {
-  background-color: var(--color-canvas);
-  color: var(--color-ink);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  border: 1px solid var(--color-canvas-soft);
-}
-
-.card-elevated {
-  background-color: var(--color-canvas);
-  color: var(--color-ink);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 4px 16px 0px;
-  border: 1px solid transparent;
-}
-
-.card-soft-tinted {
+.btn-airbnb-secondary:hover {
   background-color: var(--color-canvas-soft);
-  color: var(--color-ink);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-2xl);
-  border: none;
+}
+
+/* Modal scale animation */
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }

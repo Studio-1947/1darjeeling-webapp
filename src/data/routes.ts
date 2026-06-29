@@ -6,6 +6,7 @@ export interface Route {
   duration: string;
   road: string;
   note: string;
+  photo: string;
 }
 
 export const routes: Route[] = [
@@ -17,15 +18,17 @@ export const routes: Route[] = [
     duration: "3–4 hrs",
     road: "Via Rohini or Kurseong",
     note: "The standard arrival route from the plains. The Rohini road is usually smoother; the Kurseong road passes more tea gardens.",
+    photo: "https://st.indiarailinfo.com/kjfdsuiemjvcya24/0/3/8/4/4479384/0/img20191105194816290069.jpg",
   },
   {
     id: "darjeeling-mirik",
     from: "Darjeeling",
     to: "Mirik",
     distance: "~50 km",
-    duration: "~2 hrs",
+    duration: "~2.5 hrs",
     road: "Via Sukhiapokhri & Orange Valley",
     note: "Drops through orange-growing country — worth timing for harvest season if you can.",
+    photo: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Mirik_lake_panorama.jpg?utm_source=en.wikivoyage.org&utm_campaign=index&utm_content=original",
   },
   {
     id: "darjeeling-kalimpong",
@@ -35,6 +38,7 @@ export const routes: Route[] = [
     duration: "~2.5 hrs",
     road: "Via the Teesta valley",
     note: "Descends to the river before climbing back up — a proper change of scenery from Darjeeling's ridgeline.",
+    photo: "https://nomadicweekends.com/blog/wp-content/uploads/2019/03/Kalimpong-1024x412.jpg",
   },
   {
     id: "darjeeling-gangtok",
@@ -44,6 +48,7 @@ export const routes: Route[] = [
     duration: "~4 hrs",
     road: "Via Teesta Bazar",
     note: "Crosses into Sikkim — carry photo ID for the checkpoint, and check current permit rules if you're a foreign national.",
+    photo: "https://hillstarholidays.com/wp-content/uploads/2022/09/3rd-image.jpg",
   },
   {
     id: "darjeeling-manebhanjan",
@@ -53,6 +58,7 @@ export const routes: Route[] = [
     duration: "~1.5 hrs",
     road: "Via Ghoom & Sukhiapokhri",
     note: "The jumping-off point for the Singalila Ridge and Sandakphu trek.",
+    photo: "https://i.ytimg.com/vi/Kbzb13ECO8c/maxresdefault.jpg",
   },
   {
     id: "town-sightseeing",
@@ -62,6 +68,7 @@ export const routes: Route[] = [
     duration: "~3 hrs",
     road: "Local hill roads",
     note: "The classic dawn sightseeing circuit, usually shared by 4–6 people in one jeep.",
+    photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNUz52KmrcUxc6JiuNnQ_2jcF3aslKTkyk2q5fezcKez5COLMLMgXRA-Vj&s=10",
   },
 ];
 

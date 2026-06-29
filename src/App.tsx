@@ -1,573 +1,592 @@
-import { useState } from 'react';
-import { attractions } from './data/attractions';
-import { routes, driverNotes } from './data/routes';
+import { useState, useMemo } from 'react';
 import { stays } from './data/stays';
-import { produce, monthLabels } from './data/produce';
-import { communities, festivals, cuisineNotes } from './data/culture';
-import { tips } from './data/tips';
+import { drivers } from './data/drivers';
+import { routes } from './data/routes';
+import { cafes } from './data/cafes';
+import { attractions } from './data/attractions';
+
+type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions';
 
 export default function App() {
-  // Ride booking states
-  const [selectedRouteId, setSelectedRouteId] = useState<string>(routes[0].id);
-  const [jeepType, setJeepType] = useState<'shared' | 'private' | 'heritage'>('shared');
-  const [rideCalculated, setRideCalculated] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('stays');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Modal & Booking States
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [selectedItemType, setSelectedItemType] = useState<TabType | null>(null);
+  
+  // Booking Calculator States
+  const [bookingDays, setBookingDays] = useState(2);
+  const [guestCount, setGuestCount] = useState(2);
+  const [jeepHireType, setJeepHireType] = useState<'shared' | 'private'>('private');
+  const [checkInDate, setCheckInDate] = useState('2026-07-10');
+  const [checkOutDate, setCheckOutDate] = useState('2026-07-12');
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
-  // Attraction filter states
-  const categories = Array.from(new Set(attractions.map(a => a.category)));
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  // Stay filter state
-  const stayTypes = Array.from(new Set(stays.map(s => s.type)));
-  const [selectedStayType, setSelectedStayType] = useState<string | null>(null);
-
-  // Produce month selection state
-  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number>(new Date().getMonth()); // 0-11
-
-  // FAQ open/close state
-  const [openFaqId, setOpenFaqId] = useState<string | null>(null);
-
-  // Calculate pricing based on route & vehicle
-  const currentRoute = routes.find(r => r.id === selectedRouteId) || routes[0];
-
-  const getFare = () => {
-    // Base multiplier based on route distance estimation
-    const distNum = parseInt(currentRoute.distance.replace(/[^0-9]/g, '')) || 50;
-    let base = distNum * 12; // Base rate per km
-
-    if (jeepType === 'shared') {
-      return `₹${Math.round(base * 0.15)} per seat`;
-    } else if (jeepType === 'private') {
-      return `₹${Math.round(base * 1.2)} private SUV`;
-    } else {
-      return `₹${Math.round(base * 2.2)} Heritage Land Rover`;
+  // Search Filter
+  const filteredItems = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    switch (activeTab) {
+      case 'stays':
+        return stays.filter(
+          s => s.name.toLowerCase().includes(query) || s.area.toLowerCase().includes(query) || s.type.toLowerCase().includes(query)
+        );
+      case 'drivers':
+        return drivers.filter(
+          d => d.name.toLowerCase().includes(query) || d.vehicle.toLowerCase().includes(query)
+        );
+      case 'routes':
+        return routes.filter(
+          r => r.from.toLowerCase().includes(query) || r.to.toLowerCase().includes(query)
+        );
+      case 'cafes':
+        return cafes.filter(
+          c => c.name.toLowerCase().includes(query) || c.area.toLowerCase().includes(query) || c.specialty.toLowerCase().includes(query)
+        );
+      case 'attractions':
+        return attractions.filter(
+          a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query)
+        );
+      default:
+        return [];
     }
+  }, [activeTab, searchQuery]);
+
+  // Open Details Modal
+  const handleOpenDetails = (item: any, type: TabType) => {
+    setSelectedItem(item);
+    setSelectedItemType(type);
+    setBookingConfirmed(false);
   };
 
-  const filteredAttractions = selectedCategory
-    ? attractions.filter(a => a.category === selectedCategory)
-    : attractions;
+  // Close Modal
+  const handleCloseDetails = () => {
+    setSelectedItem(null);
+    setSelectedItemType(null);
+  };
 
-  const filteredStays = selectedStayType
-    ? stays.filter(s => s.type === selectedStayType)
-    : stays;
+  // Calculate pricing
+  const calculateTotal = () => {
+    if (!selectedItem || !selectedItemType) return 0;
+    if (selectedItemType === 'stays') {
+      const price = parseInt(selectedItem.priceRange.replace(/[^0-9]/g, '')) || 1200;
+      return price * bookingDays;
+    }
+    if (selectedItemType === 'drivers') {
+      const price = parseInt(selectedItem.chargePerDay.replace(/[^0-9]/g, '')) || 3200;
+      return price * bookingDays;
+    }
+    if (selectedItemType === 'routes') {
+      const distNum = parseInt(selectedItem.distance.replace(/[^0-9]/g, '')) || 50;
+      const base = distNum * 12;
+      return jeepHireType === 'shared' ? Math.round(base * 0.15) * guestCount : Math.round(base * 1.2);
+    }
+    return 0;
+  };
 
-  // Find produce for the selected month (month numbers are 1-based in produce.ts)
-  const activeProduce = produce.filter(p => p.months.includes(selectedMonthIndex + 1));
+  // Mock reservation action
+  const handleConfirmReservation = (e: React.FormEvent) => {
+    e.preventDefault();
+    setBookingConfirmed(true);
+    setTimeout(() => {
+      handleCloseDetails();
+      alert("Reservation successfully requested! The local operator will contact you via WhatsApp shortly.");
+    }, 1800);
+  };
 
   return (
-    <div className="min-h-screen bg-canvas text-ink selection:bg-black selection:text-white">
-      {/* ─── STICKY HEADER ─── */}
-      <header className="sticky top-0 z-50 bg-canvas/95 backdrop-blur-md border-b border-canvas-soft px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-8">
-          <a href="#" className="text-2xl font-display font-bold tracking-tight">
-            1darjeeling
+    <div className="min-h-screen bg-canvas text-ink selection:bg-primary selection:text-white">
+      
+      {/* ─── AIRBNB NAV HEADER ─── */}
+      <header className="sticky top-0 z-40 bg-canvas border-b border-canvas-softer px-6 py-4 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4">
+        {/* Airbnb Style Logo */}
+        <div className="flex items-center justify-between w-full md:w-auto">
+          <a href="#" className="flex items-center gap-2.5 text-primary font-bold text-2xl tracking-tight">
+            <img src="/logo.png" alt="1darjeeling logo" className="h-8 w-auto object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+            <span>1darjeeling</span>
           </a>
-          <nav className="hidden md:flex space-x-6">
-            <a href="#routes" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Routes</a>
-            <a href="#attractions" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Attractions</a>
-            <a href="#stays" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Stays</a>
-            <a href="#produce" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Harvest</a>
-            <a href="#culture" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Culture</a>
-            <a href="#tips" className="text-sm font-medium text-body-text hover:text-ink transition-colors">Tips</a>
-          </nav>
+          <span className="text-xs bg-canvas-soft px-2.5 py-1 rounded-full border border-canvas-softer font-medium md:hidden">
+            Airbnb Clone
+          </span>
         </div>
-        <div className="flex items-center space-x-4">
-          <a href="#routes" className="btn-pill-primary text-sm py-2 px-5">
-            Book Ride
-          </a>
+
+        {/* Airbnb Floating Search Bar */}
+        <div className="flex items-center bg-white border border-canvas-softer shadow-[0_1px_2px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.1)] rounded-pill px-4 py-2 w-full md:w-auto max-w-lg transition-all cursor-pointer">
+          <div className="flex-1 text-left px-2">
+            <input
+              type="text"
+              placeholder={`Search ${activeTab}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent text-sm font-semibold outline-none border-none placeholder:text-body-text"
+            />
+          </div>
+          <div className="w-[1px] h-6 bg-canvas-softer mx-3 hidden md:block"></div>
+          <button className="bg-primary text-white p-2.5 rounded-full flex items-center justify-center hover:bg-primary-dark transition-colors min-w-[32px] min-h-[32px]">
+            <span className="text-xs">🔍</span>
+          </button>
+        </div>
+
+        {/* User profile controls */}
+        <div className="hidden md:flex items-center space-x-6 text-sm font-semibold text-ink">
+          <a href="#" className="hover:bg-canvas-soft px-4 py-2 rounded-full transition-colors">Airbnb your home</a>
+          <span className="cursor-pointer">🌐</span>
+          <div className="flex items-center space-x-2 border border-canvas-softer rounded-full p-2 hover:shadow-md transition-shadow cursor-pointer bg-white">
+            <span>☰</span>
+            <div className="w-8 h-8 rounded-full bg-body-text text-white flex items-center justify-center text-xs">
+              👤
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* ─── HERO BAND ─── */}
-      <section className="bg-canvas py-16 px-6 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 max-w-7xl mx-auto items-center">
-        <div className="lg:col-span-7 space-y-6">
-          <span className="text-xs uppercase tracking-widest text-body-text font-bold">Darjeeling Mobility Portal</span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-ink leading-tight">
-            Go anywhere in the queen of hills.
-          </h1>
-          <p className="text-lg text-body-text max-w-xl">
-            From the narrow-gauge curves of Ghoom to the high ridges of Sandakphu, find trusted routes, stays, and shared mobility options.
-          </p>
-          <div className="flex flex-wrap gap-3 pt-2">
-            <a href="#attractions" className="btn-pill-secondary">Explore Attractions</a>
-            <a href="#produce" className="btn-pill-subtle">Seasonal Guide</a>
-          </div>
-        </div>
-
-        {/* Ride request form card */}
-        <div id="routes" className="lg:col-span-5 bg-canvas rounded-xl p-6 shadow-[rgba(0,0,0,0.16)_0px_4px_16px_0px] border border-canvas-soft">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-canvas-soft">
-            <h3 className="text-xl font-bold">Plan your route</h3>
-            <span className="text-xs bg-canvas-soft px-3 py-1 rounded-pill-tab font-medium">Local Jeeps</span>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-body-text uppercase mb-2">Select Route</label>
-              <select
-                className="w-full bg-canvas-soft border-0 p-4 rounded-md text-ink text-sm focus:ring-2 focus:ring-black outline-none transition-all"
-                value={selectedRouteId}
-                onChange={(e) => {
-                  setSelectedRouteId(e.target.value);
-                  setRideCalculated(false);
-                }}
-              >
-                {routes.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.from} → {r.to} ({r.distance})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-body-text uppercase mb-2">Jeep / Ride Class</label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setJeepType('shared');
-                    setRideCalculated(false);
-                  }}
-                  className={`py-3 text-xs font-medium border rounded-md transition-all ${
-                    jeepType === 'shared'
-                      ? 'bg-black text-white border-black'
-                      : 'bg-canvas text-ink border-surface-pressed hover:bg-canvas-soft'
-                  }`}
-                >
-                  Shared Jeep
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setJeepType('private');
-                    setRideCalculated(false);
-                  }}
-                  className={`py-3 text-xs font-medium border rounded-md transition-all ${
-                    jeepType === 'private'
-                      ? 'bg-black text-white border-black'
-                      : 'bg-canvas text-ink border-surface-pressed hover:bg-canvas-soft'
-                  }`}
-                >
-                  Private SUV
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setJeepType('heritage');
-                    setRideCalculated(false);
-                  }}
-                  className={`py-3 text-xs font-medium border rounded-md transition-all ${
-                    jeepType === 'heritage'
-                      ? 'bg-black text-white border-black'
-                      : 'bg-canvas text-ink border-surface-pressed hover:bg-canvas-soft'
-                  }`}
-                >
-                  Land Rover
-                </button>
-              </div>
-            </div>
-
-            {!rideCalculated ? (
-              <button
-                type="button"
-                onClick={() => setRideCalculated(true)}
-                className="w-full btn-large-rounded text-center font-bold"
-              >
-                Calculate Fare & Details
-              </button>
-            ) : (
-              <div className="space-y-4 pt-4 border-t border-canvas-soft animate-fade-in">
-                <div className="flex items-baseline justify-between">
-                  <span className="text-sm font-semibold text-body-text">Estimated Price:</span>
-                  <span className="text-2xl font-bold text-black">{getFare()}</span>
-                </div>
-                
-                <div className="bg-canvas-soft p-4 rounded-md text-xs space-y-2">
-                  <p className="text-body-text font-medium"><strong className="text-ink">Travel Duration:</strong> {currentRoute.duration}</p>
-                  <p className="text-body-text font-medium"><strong className="text-ink">Road Type:</strong> {currentRoute.road}</p>
-                  <p className="text-body-text italic mt-2">"{currentRoute.note}"</p>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => alert(`Inquiry submitted for: ${currentRoute.from} to ${currentRoute.to} via ${jeepType} service.`)}
-                    className="flex-1 btn-pill-primary text-center py-3 text-sm"
-                  >
-                    Send Jeep Inquiry
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRideCalculated(false)}
-                    className="btn-pill-subtle text-center py-3 text-sm"
-                  >
-                    Reset
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Driver Notes banner */}
-      <section className="bg-canvas-soft py-12 px-6 border-y border-surface-pressed">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-xs uppercase tracking-wider text-body-text font-bold mb-6">Essential Driver & Road Notes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {driverNotes.map((note, index) => (
-              <div key={index} className="space-y-2">
-                <h4 className="text-base font-bold text-ink">{note.heading}</h4>
-                <p className="text-sm text-body-text leading-relaxed">{note.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── ATTRACTIONS SECTION ─── */}
-      <section id="attractions" className="py-20 px-6 max-w-7xl mx-auto space-y-10">
-        <div className="space-y-4">
-          <span className="text-xs uppercase tracking-widest text-body-text font-bold">Local Sights</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-ink">Explore the Landmarks</h2>
-          <p className="text-body-text max-w-xl">
-            From vintage steam engines to sunrise viewing balconies, filter the top experiences Darjeeling offers.
-          </p>
-        </div>
-
-        {/* Category Pill filter row */}
-        <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 hide-scrollbar">
+      {/* ─── AIRBNB CATEGORIES BAR ─── */}
+      <div className="sticky top-[73px] z-30 bg-canvas border-b border-canvas-softer py-4 px-6 md:px-20 flex items-center justify-start md:justify-center overflow-x-auto hide-scrollbar gap-10">
+        {(
+          [
+            { id: 'stays', label: 'Homestays', icon: '/homestay.svg' },
+            { id: 'drivers', label: 'Drivers', icon: '/driver.svg' },
+            { id: 'routes', label: 'Jeep Routes', icon: '/routes.svg' },
+            { id: 'cafes', label: 'Cafes', icon: '/cafe.svg' },
+            { id: 'attractions', label: 'Experiences', icon: '/experiences.svg' }
+          ] as const
+        ).map((tab) => (
           <button
-            onClick={() => setSelectedCategory(null)}
-            className={`px-5 py-2 text-xs font-semibold rounded-pill transition-all ${
-              selectedCategory === null
-                ? 'bg-black text-white'
-                : 'bg-canvas-soft text-ink hover:bg-surface-pressed'
+            key={tab.id}
+            onClick={() => {
+              setActiveTab(tab.id);
+              setSearchQuery('');
+            }}
+            className={`flex flex-col items-center gap-2 pb-2.5 border-b-2 text-xs font-semibold whitespace-nowrap transition-all outline-none ${
+              activeTab === tab.id
+                ? 'border-ink text-ink'
+                : 'border-transparent text-body-text hover:text-ink hover:border-canvas-softer'
             }`}
           >
-            All Places
+            <img 
+              src={tab.icon} 
+              alt={tab.label} 
+              className={`w-15 h-15 object-contain transition-all ${
+                activeTab === tab.id ? 'opacity-100' : 'opacity-50 hover:opacity-80'
+              }`} 
+            />
+            <span>{tab.label}</span>
           </button>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2 text-xs font-semibold rounded-pill transition-all whitespace-nowrap ${
-                selectedCategory === cat
-                  ? 'bg-black text-white'
-                  : 'bg-canvas-soft text-ink hover:bg-surface-pressed'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        ))}
+      </div>
 
-        {/* Attractions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAttractions.map((attraction) => (
-            <div key={attraction.id} className="card-content flex flex-col justify-between hover:shadow-[rgba(0,0,0,0.08)_0px_4px_12px_0px] transition-shadow">
-              <div className="space-y-3">
-                <div className="flex justify-between items-start">
-                  <span className="text-xs font-semibold bg-canvas-soft px-3 py-1 rounded-pill-tab text-body-text">
-                    {attraction.category}
-                  </span>
-                  <span className="text-xs text-body-text font-medium">{attraction.distance}</span>
-                </div>
-                <h3 className="text-xl font-bold pt-1">{attraction.name}</h3>
-                <p className="text-sm text-body-text leading-relaxed">{attraction.blurb}</p>
-              </div>
-              <div className="mt-6 pt-4 border-t border-canvas-soft bg-canvas-softer/50 -mx-6 -mb-6 p-6 rounded-b-xl">
-                <span className="text-xs font-bold text-black uppercase tracking-wider block mb-1">💡 Insider Tip</span>
-                <p className="text-xs text-body-text italic">"{attraction.tip}"</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── POLARITY FLIP PROMO BANNER ─── */}
-      <section className="bg-black text-white py-20 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <span className="text-xs uppercase tracking-widest text-mute font-bold">Heritage Highlight</span>
-            <h2 className="text-3xl md:text-5xl font-display font-bold leading-tight">
-              The Himalayan Mountaineering Institute
-            </h2>
-            <p className="text-mute text-lg leading-relaxed max-w-xl">
-              Established in 1954 to commemorate Tenzing Norgay's historic climb of Mount Everest alongside Sir Edmund Hillary, the institute remains a vital center for mountain training.
-            </p>
-            <div className="pt-2">
-              <a href="#attractions" className="btn-pill-secondary bg-white text-black border-white hover:bg-canvas-soft">
-                Learn more
-              </a>
-            </div>
+      {/* ─── MAIN LISTINGS GRID (Airbnb Grid style) ─── */}
+      <main className="max-w-7xl mx-auto px-6 md:px-20 py-12">
+        {filteredItems.length === 0 ? (
+          <div className="text-center py-24 space-y-4">
+            <span className="text-5xl">🔎</span>
+            <h3 className="text-xl font-bold text-ink">No properties found</h3>
+            <p className="text-sm text-body-text">Try modifying your search or select another category above.</p>
           </div>
-          <div className="bg-black-elevated aspect-video rounded-xl flex items-center justify-center p-8 border border-hairline-mid">
-            <div className="text-center space-y-4">
-              <span className="text-5xl">🏔️</span>
-              <p className="font-display font-bold text-xl">Kanchenjunga Altitude Range</p>
-              <p className="text-xs text-mute font-medium">Darjeeling base level 2,050m | Peak 8,586m</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── STAYS SECTION ─── */}
-      <section id="stays" className="py-20 px-6 max-w-7xl mx-auto space-y-10">
-        <div className="space-y-4">
-          <span className="text-xs uppercase tracking-widest text-body-text font-bold">Accommodations</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-ink">Verified Stays & Lodging</h2>
-          <p className="text-body-text max-w-xl">
-            Choose from heritage planter bungalows, local family homestays, or budget mountain rooms.
-          </p>
-        </div>
-
-        {/* Stay Type filter row */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedStayType(null)}
-            className={`px-5 py-2 text-xs font-semibold rounded-pill transition-all ${
-              selectedStayType === null
-                ? 'bg-black text-white'
-                : 'bg-canvas-soft text-ink hover:bg-surface-pressed'
-            }`}
-          >
-            All Types
-          </button>
-          {stayTypes.map((type) => (
-            <button
-              key={type}
-              onClick={() => setSelectedStayType(type)}
-              className={`px-5 py-2 text-xs font-semibold rounded-pill transition-all ${
-                selectedStayType === type
-                  ? 'bg-black text-white'
-                  : 'bg-canvas-soft text-ink hover:bg-surface-pressed'
-              }`}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-
-        {/* Stays Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredStays.map((stay) => (
-            <div key={stay.id} className="card-elevated flex flex-col justify-between hover:translate-y-[-4px] transition-all duration-200">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-body-text uppercase">{stay.type}</span>
-                  <span className="text-xs bg-canvas-soft px-3 py-1 rounded-pill-tab font-medium text-ink">{stay.area}</span>
-                </div>
-                <h3 className="text-xl font-bold">{stay.name}</h3>
-                <p className="text-sm text-body-text leading-relaxed">{stay.blurb}</p>
-              </div>
-              <div className="mt-6 pt-4 border-t border-canvas-soft flex items-center justify-between">
-                <span className="text-sm font-bold text-black">{stay.priceRange}</span>
-                <button
-                  onClick={() => alert(`Booking request initiated for: ${stay.name}`)}
-                  className="btn-pill-subtle text-xs py-2 px-4"
-                >
-                  Book Stay
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── PRODUCE CALENDAR ─── */}
-      <section id="produce" className="py-20 px-6 bg-canvas-softer border-y border-surface-pressed">
-        <div className="max-w-7xl mx-auto space-y-10">
-          <div className="space-y-4">
-            <span className="text-xs uppercase tracking-widest text-body-text font-bold">Seasonal Harvest</span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-ink">Harvest & Flush Calendar</h2>
-            <p className="text-body-text max-w-xl">
-              Select a month below to see which fresh teas, fruits, and spices are being harvested in the valley.
-            </p>
-          </div>
-
-          {/* Month Tabs */}
-          <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-            {monthLabels.map((month, idx) => (
-              <button
-                key={month}
-                onClick={() => setSelectedMonthIndex(idx)}
-                className={`px-4 py-2.5 text-sm font-semibold rounded-pill-tab whitespace-nowrap transition-all ${
-                  selectedMonthIndex === idx
-                    ? 'bg-black text-white'
-                    : 'bg-white text-ink border border-surface-pressed hover:bg-canvas-soft'
-                }`}
-              >
-                {month}
-              </button>
-            ))}
-          </div>
-
-          {/* Seasonal Produce Details */}
-          <div className="bg-canvas rounded-xl p-8 border border-canvas-soft">
-            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <span>🌾</span> Active Harvests in {monthLabels[selectedMonthIndex]}
-            </h3>
-
-            {activeProduce.length === 0 ? (
-              <p className="text-sm text-body-text italic">No major harvests scheduled for this month. The hills are in rest season.</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {activeProduce.map((p) => (
-                  <div key={p.id} className="p-5 bg-canvas-soft rounded-lg space-y-2 border border-transparent hover:border-surface-pressed transition-colors">
-                    <h4 className="font-bold text-base text-black">{p.name}</h4>
-                    <p className="text-xs text-body-text font-semibold">
-                      Harvest Months: {p.months.map(m => monthLabels[m - 1]).join(', ')}
-                    </p>
-                    <p className="text-sm text-body-text leading-relaxed pt-1">{p.blurb}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── CULTURE & CUISINE ─── */}
-      <section id="culture" className="py-20 px-6 max-w-7xl mx-auto space-y-12">
-        <div className="space-y-4">
-          <span className="text-xs uppercase tracking-widest text-body-text font-bold">Local Heritage</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-ink">People, Culture & Cuisine</h2>
-          <p className="text-body-text max-w-xl">
-            A rich blend of Gorkha, Lepcha, Bhutia, and Tibetan traditions that shape the daily rhythms of the hills.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Communities & Festivals Card */}
-          <div className="card-content space-y-6">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <span>👥</span> Communities & Festivals
-            </h3>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
             
-            <div className="space-y-4 divide-y divide-canvas-soft">
-              {communities.map((c) => (
-                <div key={c.id} className="pt-4 first:pt-0">
-                  <h4 className="font-bold text-sm text-black mb-1">{c.name}</h4>
-                  <p className="text-xs text-body-text leading-relaxed">{c.blurb}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-4 border-t border-canvas-soft">
-              <h4 className="font-bold text-sm text-black mb-3">Key Seasonal Festivals:</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {festivals.map((f) => (
-                  <div key={f.id} className="p-3 bg-canvas-soft rounded-md text-xs">
-                    <div className="font-bold text-black">{f.name}</div>
-                    <div className="text-body-text font-medium mt-0.5">{f.season}</div>
-                    <div className="text-mute mt-1 leading-normal scale-95 origin-left">{f.blurb.substring(0, 50)}...</div>
+            {/* 1. HOMESTAYS */}
+            {activeTab === 'stays' &&
+              (filteredItems as typeof stays).map((stay) => (
+                <div
+                  key={stay.id}
+                  onClick={() => handleOpenDetails(stay, 'stays')}
+                  className="group cursor-pointer flex flex-col space-y-2"
+                >
+                  <div className="aspect-square bg-canvas-soft rounded-xl relative overflow-hidden border border-canvas-softer">
+                    <img src={stay.photo} alt={stay.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-ink text-[10px] font-bold px-2.5 py-1 rounded-md border border-canvas-softer shadow-sm">
+                      {stay.type}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Cuisine Card */}
-          <div className="card-content space-y-6 bg-canvas">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <span>🥟</span> Himalayan Cuisine
-            </h3>
-            <p className="text-sm text-body-text leading-relaxed">
-              Warm yourself up with traditional dishes crafted perfectly for high altitude weather conditions.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {cuisineNotes.map((item, idx) => (
-                <div key={idx} className="p-4 bg-canvas-soft rounded-lg space-y-1">
-                  <h4 className="font-bold text-sm text-black">{item.name}</h4>
-                  <p className="text-xs text-body-text leading-relaxed">{item.blurb}</p>
+                  <div className="text-sm space-y-0.5">
+                    <div className="flex justify-between items-center font-semibold text-ink">
+                      <span className="truncate pr-2">{stay.name}</span>
+                      <span className="font-normal text-xs flex items-center gap-1">★ 4.92</span>
+                    </div>
+                    <p className="text-body-text text-xs">{stay.area}</p>
+                    <p className="text-mute text-xs truncate">{stay.blurb}</p>
+                    <p className="text-ink font-bold pt-1">
+                      {stay.priceRange.split('–')[0]} <span className="font-normal text-body-text text-xs">/ night</span>
+                    </p>
+                  </div>
                 </div>
               ))}
+
+            {/* 2. DRIVERS */}
+            {activeTab === 'drivers' &&
+              (filteredItems as typeof drivers).map((driver) => (
+                <div
+                  key={driver.id}
+                  onClick={() => handleOpenDetails(driver, 'drivers')}
+                  className="group cursor-pointer flex flex-col space-y-2"
+                >
+                  <div className="aspect-square bg-canvas-soft rounded-xl relative overflow-hidden border border-canvas-softer">
+                    <img src={driver.photo} alt={driver.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <span className="absolute bottom-3 left-3 right-3 bg-white/95 text-center py-1 rounded-full text-xs font-semibold shadow-sm border border-canvas-softer">
+                      {driver.vehicle}
+                    </span>
+                  </div>
+                  <div className="text-sm space-y-0.5">
+                    <div className="flex justify-between items-center font-semibold text-ink">
+                      <span>{driver.name}</span>
+                      <span className="font-normal text-xs">★ {driver.rating}</span>
+                    </div>
+                    <p className="text-body-text text-xs">{driver.experienceYears} years experience</p>
+                    <p className="text-mute text-xs truncate">Speaks: {driver.languages.join(', ')}</p>
+            
+                  </div>
+                </div>
+              ))}
+
+            {/* 3. JEEP ROUTES */}
+            {activeTab === 'routes' &&
+              (filteredItems as typeof routes).map((route) => (
+                <div
+                  key={route.id}
+                  onClick={() => handleOpenDetails(route, 'routes')}
+                  className="group cursor-pointer flex flex-col space-y-2"
+                >
+                  <div className="aspect-square bg-canvas-soft rounded-xl relative overflow-hidden border border-canvas-softer">
+                    <img src={route.photo} alt={route.from + ' to ' + route.to} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <span className="absolute bottom-3 left-3 right-3 bg-white/95 text-center py-1.5 rounded-lg text-xs font-bold shadow-sm border border-canvas-softer leading-none">
+                      {route.from} ⇄ {route.to}
+                    </span>
+                  </div>
+                  <div className="text-sm space-y-0.5">
+                    <div className="flex justify-between items-center font-semibold text-ink">
+                      <span>{route.distance}</span>
+                      <span className="font-normal text-xs text-body-text">{route.duration}</span>
+                    </div>
+                    <p className="text-body-text text-xs">{route.road}</p>
+                    <p className="text-mute text-xs truncate">{route.note}</p>
+                    <p className="text-primary font-semibold text-xs pt-1">View Fare Details →</p>
+                  </div>
+                </div>
+              ))}
+
+            {/* 4. CAFES */}
+            {activeTab === 'cafes' &&
+              (filteredItems as typeof cafes).map((cafe) => (
+                <div
+                  key={cafe.id}
+                  onClick={() => handleOpenDetails(cafe, 'cafes')}
+                  className="group cursor-pointer flex flex-col space-y-2"
+                >
+                  <div className="aspect-square bg-canvas-soft rounded-xl relative overflow-hidden border border-canvas-softer">
+                    <img src={cafe.photo} alt={cafe.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <span className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-ink text-[10px] font-bold px-2 py-0.5 rounded border border-canvas-softer shadow-sm">
+                      Est. {cafe.established}
+                    </span>
+                  </div>
+                  <div className="text-sm space-y-0.5">
+                    <div className="flex justify-between items-center font-semibold text-ink">
+                      <span>{cafe.name}</span>
+                      <span className="font-normal text-xs">★ {cafe.rating}</span>
+                    </div>
+                    <p className="text-body-text text-xs">{cafe.area}</p>
+                    <p className="text-mute text-xs truncate">Specialty: {cafe.specialty}</p>
+                    <p className="text-ink font-bold pt-1">{cafe.priceRange}</p>
+                  </div>
+                </div>
+              ))}
+
+            {/* 5. EXPERIENCES */}
+            {activeTab === 'attractions' &&
+              (filteredItems as typeof attractions).map((att) => (
+                <div
+                  key={att.id}
+                  onClick={() => handleOpenDetails(att, 'attractions')}
+                  className="group cursor-pointer flex flex-col space-y-2"
+                >
+                  <div className="aspect-square bg-canvas-soft rounded-xl relative overflow-hidden border border-canvas-softer">
+                    <img src={att.photo} alt={att.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  </div>
+                  <div className="text-sm space-y-0.5">
+                    <div className="flex justify-between items-center font-semibold text-ink">
+                      <span className="truncate pr-2">{att.name}</span>
+                      <span className="font-normal text-xs whitespace-nowrap">{att.distance}</span>
+                    </div>
+                    <p className="text-body-text text-xs">{att.category}</p>
+                    <p className="text-mute text-xs truncate">{att.blurb}</p>
+                    <p className="text-primary font-semibold text-xs pt-1">Read details & tips →</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+      </main>
+
+      {/* ─── AIRBNB STYLE DETAILED MODAL ─── */}
+      {selectedItem && selectedItemType && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-canvas rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-canvas-softer animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b border-canvas-softer px-6 py-4 flex items-center justify-between z-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-body-text">
+                {selectedItemType === 'attractions' ? 'Experience details' : `${selectedItemType} details`}
+              </span>
+              <button
+                onClick={handleCloseDetails}
+                className="text-lg font-mono text-body-text hover:text-black focus:outline-none p-1"
+              >
+                ✕
+              </button>
             </div>
 
-            <div className="bg-canvas-softer p-4 rounded-xl text-xs flex items-center gap-4">
-              <span className="text-2xl">☕</span>
-              <div>
-                <strong className="text-black block mb-0.5">Tea Brewing Custom</strong>
-                <p className="text-body-text">Local households prepare orthodox black tea without milk, steep it covered, and drink it piping hot to highlight premium garden flavours.</p>
+            {/* Modal Body */}
+            <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-8">
+              
+              {/* Info Column */}
+              <div className="md:col-span-7 space-y-6">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-ink leading-tight">
+                    {selectedItem.name || selectedItem.heading}
+                  </h2>
+                  <div className="flex items-center space-x-3 text-xs text-body-text mt-2 font-medium">
+                    <span>★ 4.90</span>
+                    <span>·</span>
+                    <span>{selectedItem.area || selectedItem.category || selectedItem.label}</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-canvas-softer pt-6 space-y-3">
+                  <h4 className="text-sm font-semibold text-ink">About this listing</h4>
+                  <p className="text-sm text-body-text leading-relaxed">
+                    {selectedItem.blurb || selectedItem.body || selectedItem.note}
+                  </p>
+                </div>
+
+                {/* Conditional Metadata */}
+                {selectedItemType === 'stays' && (
+                  <div className="border-t border-canvas-softer pt-6 space-y-3">
+                    <h4 className="text-sm font-semibold text-ink">What this place offers</h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm text-body-text">
+                      <div>🥣 Free Breakfast</div>
+                      <div>🔥 Fireplace heating</div>
+                      <div>🚿 Hot water showers</div>
+                      <div>⛰️ Kanchenjunga Balcony View</div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedItemType === 'drivers' && (
+                  <div className="border-t border-canvas-softer pt-6 space-y-3 text-sm text-body-text">
+                    <h4 className="text-sm font-semibold text-ink text-black">Operator Details</h4>
+                    <p><strong>Vehicle model:</strong> {selectedItem.vehicle}</p>
+                    <p><strong>Experience:</strong> {selectedItem.experienceYears} Years driving Himalayan terrain</p>
+                    <p><strong>Languages:</strong> {selectedItem.languages.join(', ')}</p>
+                  </div>
+                )}
+
+                {selectedItemType === 'cafes' && (
+                  <div className="border-t border-canvas-softer pt-6 space-y-3 text-sm text-body-text">
+                    <h4 className="text-sm font-semibold text-ink text-black">Menu & Hours</h4>
+                    <p><strong>Chef's Specialty:</strong> {selectedItem.specialty}</p>
+                    <p><strong>Opening Hours:</strong> {selectedItem.hours}</p>
+                    <p><strong>Established year:</strong> {selectedItem.established}</p>
+                  </div>
+                )}
+
+                {selectedItemType === 'attractions' && (
+                  <div className="border-t border-canvas-softer pt-6 space-y-3 text-sm">
+                    <h4 className="text-sm font-semibold text-ink text-black">Insider Travel Tips</h4>
+                    <div className="bg-canvas-soft p-4 rounded-xl border border-canvas-softer italic text-body-text">
+                      "{selectedItem.tip}"
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* Dynamic Interactive Booking Card */}
+              <div className="md:col-span-5">
+                {['stays', 'drivers', 'routes'].includes(selectedItemType) ? (
+                  <div className="bg-white rounded-2xl p-6 border border-canvas-softer shadow-lg space-y-5">
+                    
+                    {/* Booking header price */}
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-xl font-bold text-ink">
+                        {selectedItem.priceRange ? selectedItem.priceRange.split('–')[0] : selectedItem.chargePerDay ? selectedItem.chargePerDay.split(' ')[0] : '₹1,500'}
+                        <span className="text-xs font-normal text-body-text"> / day</span>
+                      </span>
+                      <span className="text-xs font-semibold text-ink">★ 4.90</span>
+                    </div>
+
+                    <form onSubmit={handleConfirmReservation} className="space-y-4">
+                      {/* Airbnb Date / Guests stacked grid box */}
+                      <div className="border border-canvas-softer rounded-xl overflow-hidden text-xs">
+                        <div className="grid grid-cols-2 border-b border-canvas-softer">
+                          <div className="p-2.5 border-r border-canvas-softer">
+                            <label className="block font-bold text-ink uppercase text-[9px]">Check-in</label>
+                            <input
+                              type="date"
+                              value={checkInDate}
+                              onChange={(e) => setCheckInDate(e.target.value)}
+                              className="w-full bg-transparent border-none p-0 outline-none text-xs font-medium"
+                            />
+                          </div>
+                          <div className="p-2.5">
+                            <label className="block font-bold text-ink uppercase text-[9px]">Check-out</label>
+                            <input
+                              type="date"
+                              value={checkOutDate}
+                              onChange={(e) => setCheckOutDate(e.target.value)}
+                              className="w-full bg-transparent border-none p-0 outline-none text-xs font-medium"
+                            />
+                          </div>
+                        </div>
+
+                        {selectedItemType === 'routes' ? (
+                          <div className="p-2.5">
+                            <label className="block font-bold text-ink uppercase text-[9px] mb-1">Hire Class</label>
+                            <div className="grid grid-cols-2 gap-1">
+                              <button
+                                type="button"
+                                onClick={() => setJeepHireType('shared')}
+                                className={`py-1 text-[10px] rounded font-semibold border transition-all ${
+                                  jeepHireType === 'shared' ? 'bg-primary text-white border-primary' : 'bg-white text-ink border-canvas-softer'
+                                }`}
+                              >
+                                Shared Seat
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setJeepHireType('private')}
+                                className={`py-1 text-[10px] rounded font-semibold border transition-all ${
+                                  jeepHireType === 'private' ? 'bg-primary text-white border-primary' : 'bg-white text-ink border-canvas-softer'
+                                }`}
+                              >
+                                Private Jeep
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-2.5">
+                            <label className="block font-bold text-ink uppercase text-[9px]">Guests</label>
+                            <select
+                              value={guestCount}
+                              onChange={(e) => setGuestCount(parseInt(e.target.value))}
+                              className="w-full bg-transparent border-none p-0 outline-none text-xs font-medium mt-0.5"
+                            >
+                              <option value={1}>1 guest</option>
+                              <option value={2}>2 guests</option>
+                              <option value={4}>4 guests</option>
+                              <option value={6}>6 guests</option>
+                            </select>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Day calculations */}
+                      {['stays', 'drivers'].includes(selectedItemType) && (
+                        <div>
+                          <label className="block text-[10px] font-bold uppercase text-body-text mb-1">Booking Duration (Days)</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="30"
+                            value={bookingDays}
+                            onChange={(e) => setBookingDays(Math.max(1, parseInt(e.target.value) || 1))}
+                            className="w-full bg-canvas-soft border border-canvas-softer p-2.5 rounded-lg text-xs"
+                          />
+                        </div>
+                      )}
+
+                      {/* Calculation breakdowns */}
+                      <div className="space-y-2 pt-2 text-xs text-body-text">
+                        <div className="flex justify-between">
+                          <span>Fare estimate x duration</span>
+                          <span>₹{calculateTotal()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Local service fee</span>
+                          <span>₹150</span>
+                        </div>
+                        <div className="flex justify-between font-bold text-ink pt-2 border-t border-canvas-softer text-sm">
+                          <span>Total before tax:</span>
+                          <span>₹{calculateTotal() + 150}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={bookingConfirmed}
+                        className="btn-airbnb-primary mt-2"
+                      >
+                        {bookingConfirmed ? (
+                          <>
+                            <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                            Reserving...
+                          </>
+                        ) : (
+                          "Reserve"
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  <div className="bg-canvas-soft rounded-2xl p-6 border border-canvas-softer space-y-4 text-center">
+                    <span className="text-4xl block">📍</span>
+                    <h4 className="font-bold text-sm text-ink">Walk-in Location</h4>
+                    <p className="text-xs text-body-text leading-relaxed">
+                      This listing is open for visitors. No booking is required beforehand. Just save the timings and directions.
+                    </p>
+                    <button
+                      onClick={handleCloseDetails}
+                      className="w-full btn-airbnb-secondary py-2.5 text-xs font-semibold"
+                    >
+                      Close Details
+                    </button>
+                  </div>
+                )}
+              </div>
+
             </div>
+
           </div>
         </div>
-      </section>
-
-      {/* ─── TIPS / FAQ SECTION ─── */}
-      <section id="tips" className="py-20 px-6 max-w-4xl mx-auto space-y-10">
-        <div className="text-center space-y-4">
-          <span className="text-xs uppercase tracking-widest text-body-text font-bold">Practical Advice</span>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-ink">Traveler Tips & FAQ</h2>
-          <p className="text-body-text max-w-md mx-auto">
-            Essential guidelines to prepare for your journey to Darjeeling.
-          </p>
-        </div>
-
-        <div className="border-t border-canvas-soft divide-y divide-canvas-soft">
-          {tips.map((tip) => (
-            <div key={tip.id} className="py-4">
-              <button
-                onClick={() => setOpenFaqId(openFaqId === tip.id ? null : tip.id)}
-                className="w-full flex justify-between items-center text-left py-2 focus:outline-none"
-              >
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-body-text uppercase tracking-wider">{tip.label}</span>
-                  <h3 className="text-base font-bold text-ink">{tip.heading}</h3>
-                </div>
-                <span className="text-xl font-mono text-body-text ml-4">
-                  {openFaqId === tip.id ? '−' : '+'}
-                </span>
-              </button>
-              
-              {openFaqId === tip.id && (
-                <div className="pb-4 pt-2 text-sm text-body-text leading-relaxed animate-slide-down">
-                  {tip.body}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      )}
 
       {/* ─── FOOTER ─── */}
-      <footer className="bg-black text-white py-16 px-6 lg:px-16 border-t border-hairline-mid">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="md:col-span-2 space-y-4">
-            <h2 className="text-2xl font-display font-bold tracking-tight text-white">1darjeeling</h2>
-            <p className="text-sm text-mute max-w-sm leading-relaxed">
-              Designed as an interpretation of Uber's design language, celebrating the geography, roads, and culture of the Darjeeling hills.
-            </p>
-          </div>
+      <footer className="bg-canvas-soft border-t border-canvas-softer py-12 px-6 md:px-20 text-sm text-ink">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-mute mb-4">Portal Sections</h4>
-            <ul className="space-y-2 text-sm text-hairline-mid">
-              <li><a href="#routes" className="text-mute hover:text-white transition-colors">Jeep Routes</a></li>
-              <li><a href="#attractions" className="text-mute hover:text-white transition-colors">Local Landmarks</a></li>
-              <li><a href="#stays" className="text-mute hover:text-white transition-colors">Verified Stays</a></li>
-              <li><a href="#produce" className="text-mute hover:text-white transition-colors">Harvest Calendar</a></li>
+            <h4 className="font-semibold mb-3">Support</h4>
+            <ul className="space-y-2 text-xs text-body-text">
+              <li><a href="#" className="hover:underline">Help Centre</a></li>
+              <li><a href="#" className="hover:underline">AirCover</a></li>
+              <li><a href="#" className="hover:underline">Anti-discrimination</a></li>
+              <li><a href="#" className="hover:underline">Disability support</a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-mute mb-4">Legal & Meta</h4>
-            <ul className="space-y-2 text-sm text-hairline-mid">
-              <li><a href="#tips" className="text-mute hover:text-white transition-colors">Travel Tips</a></li>
-              <li><a href="#" className="text-mute hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-mute hover:text-white transition-colors">Terms of Service</a></li>
+            <h4 className="font-semibold mb-3">Hosting</h4>
+            <ul className="space-y-2 text-xs text-body-text">
+              <li><a href="#" className="hover:underline">Airbnb your home</a></li>
+              <li><a href="#" className="hover:underline">AirCover for Hosts</a></li>
+              <li><a href="#" className="hover:underline">Hosting resources</a></li>
+              <li><a href="#" className="hover:underline">Community forum</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-3">1darjeeling</h4>
+            <ul className="space-y-2 text-xs text-body-text">
+              <li><a href="#" className="hover:underline">Newsroom</a></li>
+              <li><a href="#" className="hover:underline">New features</a></li>
+              <li><a href="#" className="hover:underline">Careers</a></li>
+              <li><a href="#" className="hover:underline">Investors</a></li>
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-hairline-mid flex flex-col sm:flex-row justify-between items-center text-xs text-mute space-y-4 sm:space-y-0">
+        <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-canvas-softer flex flex-col md:flex-row justify-between items-center text-xs text-body-text space-y-4 md:space-y-0">
           <div>
-            &copy; {new Date().getFullYear()} 1darjeeling Mobility. All rights reserved.
+            &copy; {new Date().getFullYear()} 1darjeeling, Inc. · <a href="#" className="hover:underline">Privacy</a> · <a href="#" className="hover:underline">Terms</a> · <a href="#" className="hover:underline">Sitemap</a>
           </div>
-          <div className="flex space-x-4">
-            <a href="#" className="text-mute hover:text-white transition-colors">Rider App</a>
-            <a href="#" className="text-mute hover:text-white transition-colors">Driver App</a>
+          <div className="flex space-x-4 font-semibold text-ink">
+            <span>English (IN)</span>
+            <span>₹ INR</span>
           </div>
         </div>
       </footer>
