@@ -8,7 +8,7 @@ export default function About() {
         {/* Left Side: Image Card */}
         <div className="relative group flex justify-center w-full">
           <TiltedCard
-            imageSrc="/hero.jpg"
+            imageSrc="/darjeeling.jpg"
             altText="Darjeeling tea gardens and hills"
             containerHeight="400px"
             containerWidth="100%"
