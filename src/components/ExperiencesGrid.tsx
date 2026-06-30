@@ -1,4 +1,5 @@
 import type { Attraction } from '../data/attractions';
+import { useCardAnimation } from '../hooks/useCardAnimation';
 
 interface ExperiencesGridProps {
   items: Attraction[];
@@ -6,8 +7,10 @@ interface ExperiencesGridProps {
 }
 
 export default function ExperiencesGrid({ items, onSelect }: ExperiencesGridProps) {
+  const gridRef = useCardAnimation();
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((att) => (
         <div
           key={att.id}

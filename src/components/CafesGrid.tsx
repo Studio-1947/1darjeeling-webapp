@@ -1,4 +1,5 @@
 import type { Cafe } from '../data/cafes';
+import { useCardAnimation } from '../hooks/useCardAnimation';
 
 interface CafesGridProps {
   items: Cafe[];
@@ -6,8 +7,10 @@ interface CafesGridProps {
 }
 
 export default function CafesGrid({ items, onSelect }: CafesGridProps) {
+  const gridRef = useCardAnimation();
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((cafe) => (
         <div
           key={cafe.id}

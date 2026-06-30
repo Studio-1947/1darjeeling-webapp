@@ -16,7 +16,7 @@ const tabs = [
 
 export default function CategoryTabs({ activeTab, onTabChange, onSearchChange }: CategoryTabsProps) {
   return (
-    <div className="sticky top-0 z-30 bg-canvas/70 backdrop-blur-md border-b border-canvas-softer py-4 px-6 md:px-20 flex items-center justify-start md:justify-center overflow-x-auto hide-scrollbar gap-10">
+    <div className="sticky top-0 z-30 bg-canvas/70 backdrop-blur-md border-b border-canvas-softer py-6 px-6 md:px-20 flex items-center justify-start md:justify-center overflow-x-auto hide-scrollbar gap-12">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -24,7 +24,7 @@ export default function CategoryTabs({ activeTab, onTabChange, onSearchChange }:
             onTabChange(tab.id);
             onSearchChange('');
           }}
-          className={`flex flex-col items-center gap-2 pb-2.5 border-b-2 text-xs font-semibold whitespace-nowrap transition-all outline-none cursor-pointer ${
+          className={`flex flex-col items-center gap-3 pb-2.5 border-b-2 text-sm font-semibold whitespace-nowrap transition-all outline-none cursor-pointer ${
             activeTab === tab.id
               ? 'border-ink text-ink'
               : 'border-transparent text-body-text hover:text-ink hover:border-canvas-softer'
@@ -33,7 +33,7 @@ export default function CategoryTabs({ activeTab, onTabChange, onSearchChange }:
           <img 
             src={tab.icon} 
             alt={tab.label} 
-            className={`w-8 h-8 object-contain transition-all ${
+            className={`w-12 h-12 object-contain transition-all ${
               activeTab === tab.id ? 'opacity-100' : 'opacity-50 hover:opacity-80'
             }`} 
           />

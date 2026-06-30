@@ -1,4 +1,5 @@
 import type { Driver } from '../data/drivers';
+import { useCardAnimation } from '../hooks/useCardAnimation';
 
 interface DriversGridProps {
   items: Driver[];
@@ -6,8 +7,10 @@ interface DriversGridProps {
 }
 
 export default function DriversGrid({ items, onSelect }: DriversGridProps) {
+  const gridRef = useCardAnimation();
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((driver) => (
         <div
           key={driver.id}

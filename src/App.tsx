@@ -7,6 +7,7 @@ import { attractions } from './data/attractions';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import About from './components/About';
 import TabContent from './components/TabContent';
 import CategoryTabs from './components/CategoryTabs';
 import Footer from './components/Footer';
@@ -70,6 +71,8 @@ export default function App() {
       />
 
       <Hero />
+
+      <About />
 
       <CategoryTabs
         activeTab={activeTab}

@@ -1,4 +1,5 @@
 import type { Route } from '../data/routes';
+import { useCardAnimation } from '../hooks/useCardAnimation';
 
 interface RoutesGridProps {
   items: Route[];
@@ -6,8 +7,10 @@ interface RoutesGridProps {
 }
 
 export default function RoutesGrid({ items, onSelect }: RoutesGridProps) {
+  const gridRef = useCardAnimation();
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-fade-in">
+    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((route) => (
         <div
           key={route.id}
