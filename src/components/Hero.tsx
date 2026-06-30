@@ -1,44 +1,25 @@
-import type { TabType } from '../App';
-import StaysGrid from './StaysGrid';
-import DriversGrid from './DriversGrid';
-import RoutesGrid from './RoutesGrid';
-import CafesGrid from './CafesGrid';
-import ExperiencesGrid from './ExperiencesGrid';
-
-interface HeroProps {
-  activeTab: TabType;
-  filteredItems: any[];
-  onSelect: (item: any, type: TabType) => void;
-}
-
-export default function Hero({ activeTab, filteredItems, onSelect }: HeroProps) {
+export default function Hero() {
   return (
-    <main className="max-w-7xl mx-auto px-6 md:px-20 py-12 relative z-10">
-      {filteredItems.length === 0 ? (
-        <div className="text-center py-24 space-y-4">
-          <span className="text-5xl">🔎</span>
-          <h3 className="text-xl font-bold text-ink">No properties found</h3>
-          <p className="text-sm text-body-text">Try modifying your search or select another category above.</p>
-        </div>
-      ) : (
-        <>
-          {activeTab === 'stays' && (
-            <StaysGrid items={filteredItems as any} onSelect={(stay) => onSelect(stay, 'stays')} />
-          )}
-          {activeTab === 'drivers' && (
-            <DriversGrid items={filteredItems as any} onSelect={(driver) => onSelect(driver, 'drivers')} />
-          )}
-          {activeTab === 'routes' && (
-            <RoutesGrid items={filteredItems as any} onSelect={(route) => onSelect(route, 'routes')} />
-          )}
-          {activeTab === 'cafes' && (
-            <CafesGrid items={filteredItems as any} onSelect={(cafe) => onSelect(cafe, 'cafes')} />
-          )}
-          {activeTab === 'attractions' && (
-            <ExperiencesGrid items={filteredItems as any} onSelect={(att) => onSelect(att, 'attractions')} />
-          )}
-        </>
-      )}
-    </main>
+    <div className="relative w-full h-[50vh] min-h-[350px] overflow-hidden bg-black flex items-center justify-center">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-75 z-0"
+      >
+        <source src="/focus.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute inset-0 bg-gradient-to-t from-canvas via-transparent to-black/40 z-10" />
+      <div className="relative z-20 text-center px-6 max-w-3xl select-none">
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-md mb-4 font-display">
+          Darjeeling Awaits
+        </h1>
+        <p className="text-base md:text-lg text-white/90 max-w-xl mx-auto drop-shadow-sm font-text">
+          Explore local homestays, expert drivers, jeep routes, and cozy cafes nestled in the Himalayas.
+        </p>
+      </div>
+    </div>
   );
 }

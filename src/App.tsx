@@ -7,6 +7,8 @@ import { attractions } from './data/attractions';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import TabContent from './components/TabContent';
+import CategoryTabs from './components/CategoryTabs';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 
@@ -65,10 +67,17 @@ export default function App() {
         activeTab={activeTab}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onTabChange={setActiveTab}
       />
 
-      <Hero
+      <Hero />
+
+      <CategoryTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onSearchChange={setSearchQuery}
+      />
+
+      <TabContent
         activeTab={activeTab}
         filteredItems={filteredItems}
         onSelect={handleOpenDetails}
