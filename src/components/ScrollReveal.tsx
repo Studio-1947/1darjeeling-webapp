@@ -52,7 +52,15 @@ export default function ScrollReveal({
     const el = containerRef.current;
     if (!el) return;
 
-    const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
+    // Only use an explicit scroller when a custom container ref is provided.
+    // When using Lenis smooth scroll, the default (document) scroller is
+    // already kept in sync via `lenis.on('scroll', ScrollTrigger.update)`,
+    // so setting `scroller: window` explicitly can cause a mismatch where
+    // ScrollTrigger reads a stale native scroll position instead of
+    // the Lenis-interpolated one — which is what causes the "stuck" state.
+    const scrollerConfig = scrollContainerRef?.current
+      ? { scroller: scrollContainerRef.current }
+      : {};
 
     const ctx = gsap.context(() => {
       // Rotation animation
@@ -65,10 +73,11 @@ export default function ScrollReveal({
             rotate: 0,
             scrollTrigger: {
               trigger: el,
-              scroller,
+              ...scrollerConfig,
               start: 'top bottom',
               end: rotationEnd,
-              scrub: scrub
+              scrub: scrub,
+              invalidateOnRefresh: true
             }
           }
         );
@@ -86,10 +95,11 @@ export default function ScrollReveal({
           stagger: 0.03,
           scrollTrigger: {
             trigger: el,
-            scroller,
+            ...scrollerConfig,
             start: 'top bottom-=20%',
             end: wordAnimationEnd,
-            scrub: scrub
+            scrub: scrub,
+            invalidateOnRefresh: true
           }
         }
       );
@@ -105,17 +115,25 @@ export default function ScrollReveal({
             stagger: 0.03,
             scrollTrigger: {
               trigger: el,
-              scroller,
+              ...scrollerConfig,
               start: 'top bottom-=20%',
               end: wordAnimationEnd,
-              scrub: scrub
+              scrub: scrub,
+              invalidateOnRefresh: true
             }
           }
         );
       }
     }, el);
 
-    return () => ctx.revert();
+    // Recalculate ScrollTrigger positions after a short delay so that
+    // fonts, images and layout shifts from other components are settled.
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 100);
+
+    return () => {
+      clearTimeout(refreshTimer);
+      ctx.revert();
+    };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength, scrub]);
 
   return (
