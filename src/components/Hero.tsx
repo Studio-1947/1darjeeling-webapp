@@ -32,7 +32,7 @@ export default function Hero() {
         </h1>
         <p className="text-base md:text-lg text-white/90 max-w-xl mx-auto drop-shadow-sm font-text min-h-[3em]">
           <Typewriter
-            text="Explore local homestays, expert drivers, jeep routes, and cozy cafes nestled in the Himalayas."
+            text="Explore local homestays, expert drivers , jeep routes, and cozy cafes nestled in the Himalayas."
             speed={20}
             delay={2400}
             showCursor={true}
