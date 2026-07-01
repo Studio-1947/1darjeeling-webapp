@@ -21,7 +21,7 @@ export default function CafesGrid({ items, onSelect }: CafesGridProps) {
             <img 
               src={cafe.photo} 
               alt={cafe.name} 
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105" 
             />
             <span className="absolute top-3 right-3 bg-canvas/90 backdrop-blur-sm text-ink text-[10px] font-bold px-2 py-0.5 rounded border border-canvas-softer shadow-sm">
               Est. {cafe.established}

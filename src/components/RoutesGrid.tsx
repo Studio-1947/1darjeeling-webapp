@@ -21,7 +21,7 @@ export default function RoutesGrid({ items, onSelect }: RoutesGridProps) {
             <img 
               src={route.photo} 
               alt={`${route.from} to ${route.to}`} 
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105" 
             />
             <span className="absolute bottom-3 left-3 right-3 bg-canvas/95 text-center py-1.5 rounded-lg text-xs font-bold shadow-sm border border-canvas-softer leading-none text-ink">
               {route.from} ⇄ {route.to}

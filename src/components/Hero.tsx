@@ -4,22 +4,13 @@ export default function Hero() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
       <video
-        ref={(el) => {
-          if (el) {
-            el.muted = true;
-            el.play().catch(() => {});
-          }
-        }}
+        src="https://res.cloudinary.com/drgb8w8ak/video/upload/v1782909033/focus_o5eoxi.mp4"
         autoPlay
         loop
         muted
         playsInline
-        preload="auto"
         className="absolute top-0 left-0 w-full h-full object-cover opacity-75 z-0"
-      >
-        <source src="https://res.cloudinary.com/drgb8w8ak/video/upload/v1782824201/focus_h81cs3.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      />
       <div className="absolute bottom-0 left-0 right-0 h-0 bg-gradient-to-t from-canvas to-transparent z-10" />
       <div className="relative z-20 text-center px-6 max-w-3xl select-none">
         <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-md mb-4 font-display min-h-[2.5em] md:min-h-[2em]" style={{ color: 'white' }}>

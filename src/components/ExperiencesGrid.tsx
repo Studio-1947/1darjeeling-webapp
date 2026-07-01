@@ -21,7 +21,7 @@ export default function ExperiencesGrid({ items, onSelect }: ExperiencesGridProp
             <img 
               src={att.photo} 
               alt={att.name} 
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-105" 
             />
           </div>
           <div className="text-sm space-y-0.5">
