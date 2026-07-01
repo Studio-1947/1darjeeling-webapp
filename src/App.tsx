@@ -11,6 +11,7 @@ import About from './components/About';
 import TabContent from './components/TabContent';
 import CategoryTabs from './components/CategoryTabs';
 import Footer from './components/Footer';
+import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
 import { useLenis } from './hooks/useLenis';
 
@@ -96,6 +97,7 @@ export default function App() {
         />
       )}
 
+      <Faq />
       <Footer />
     </div>
   );
