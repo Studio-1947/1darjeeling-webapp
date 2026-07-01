@@ -17,7 +17,7 @@ export default function About() {
             scaleOnHover={1.05}
             rotateAmplitude={12}
             showMobileWarning={false}
-            showTooltip={true}
+            showTooltip={false}
           />
           {/* Floating badge */}
           <div className="absolute -bottom-6 -right-6 bg-canvas border border-canvas-softer p-6 rounded-2xl shadow-xl max-w-[200px] hidden sm:block z-30">

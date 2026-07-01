@@ -10,6 +10,7 @@ interface NavbarProps {
 export default function Navbar({ activeTab, searchQuery, onSearchChange }: NavbarProps) {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const langRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -27,11 +28,31 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    function handleScroll() {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    }
+    window.addEventListener('scroll', handleScroll);
+    // Trigger once on mount to capture initial scroll state
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="absolute top-0 left-0 w-full z-40 bg-transparent px-6 py-4 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4">
+    <header className={`fixed top-0 left-0 w-full z-40 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-canvas/95 backdrop-blur-md shadow-sm border-b border-canvas-softer py-3' 
+        : 'bg-transparent py-5'
+    }`}>
       {/* Airbnb Style Logo */}
       <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:justify-start">
-        <a href="#" className="flex items-center gap-2.5 text-white font-bold text-2xl tracking-tight">
+        <a href="#" className={`flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors duration-300 ${
+          isScrolled ? 'text-ink' : 'text-white'
+        }`}>
           <img src="/logo.png" alt="1darjeeling logo" className="h-8 w-auto object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           <span>1darjeeling</span>
         </a>
@@ -58,7 +79,11 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
 
       {/* Right Side: Host Link, Language Selector, User Menu */}
       <div className="flex items-center gap-4 mt-2 md:mt-0 md:flex-1 md:justify-end">
-        <a href="#" className="hidden lg:block text-sm font-semibold text-white hover:bg-white/10 px-4 py-2 rounded-full transition-colors">
+        <a href="#" className={`hidden lg:block text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 ${
+          isScrolled 
+            ? 'text-ink hover:bg-canvas-soft' 
+            : 'text-white hover:bg-white/10'
+        }`}>
           Host your stay
         </a>
 
@@ -66,7 +91,11 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
         <div className="relative" ref={langRef}>
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
-            className="flex items-center justify-center p-2.5 rounded-full text-white hover:bg-white/15 transition-colors border-none bg-transparent cursor-pointer"
+            className={`flex items-center justify-center p-2.5 rounded-full transition-all duration-300 border-none bg-transparent cursor-pointer ${
+              isScrolled 
+                ? 'text-ink hover:bg-canvas-soft' 
+                : 'text-white hover:bg-white/15'
+            }`}
             aria-label="Select language"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-5 h-5">
