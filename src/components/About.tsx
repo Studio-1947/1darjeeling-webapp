@@ -35,7 +35,7 @@ export default function About() {
             containerClassName="!m-0 inline-block"
             textClassName="!text-xs !font-bold !uppercase !tracking-wider !text-body-text !px-3 !py-1 !bg-canvas-soft !border !border-canvas-softer !rounded-full !inline-block"
           >
-            About 1darjeeling
+            1darjeeling
           </ScrollReveal>
 
           <ScrollReveal
