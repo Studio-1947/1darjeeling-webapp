@@ -1,4 +1,4 @@
-import type { TabType } from '../App';
+import type { TabType } from '../Home';
 import StaysGrid from './StaysGrid';
 import DriversGrid from './DriversGrid';
 import RoutesGrid from './RoutesGrid';

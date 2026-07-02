@@ -1,4 +1,4 @@
-import type { TabType } from '../App';
+import type { TabType } from '../Home';
 
 interface CategoryTabsProps {
   activeTab: TabType;

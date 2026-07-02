@@ -1,12 +1,9 @@
 {
-  "name": "1darjeeling-monorepo",
+  "name": "darjeeling-marketplace",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
-    "dev": "concurrently \"npm run dev -w frontend\" \"npm run dev -w backend\""
+    "dev": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter frontend-* dev\"",
+    "build": "pnpm -r build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

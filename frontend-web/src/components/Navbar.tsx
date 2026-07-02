@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import type { TabType } from '../App';
+import type { TabType } from '../Home';
+import LoginModal from './LoginModal';
 
 interface NavbarProps {
   activeTab: TabType;
@@ -11,6 +12,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const langRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -142,7 +144,13 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
               <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink">
                 Sign up
               </button>
-              <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+              <button 
+                onClick={() => {
+                  setShowLoginModal(true);
+                  setIsUserOpen(false);
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+              >
                 Log in
               </button>
               <hr className="border-hairline my-1" />
@@ -156,6 +164,10 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
           )}
         </div>
       </div>
+
+      {showLoginModal && (
+        <LoginModal onClose={() => setShowLoginModal(false)} />
+      )}
     </header>
   );
 }
