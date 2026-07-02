@@ -17,7 +17,7 @@ import { useLenis } from './hooks/useLenis';
 
 export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions';
 
-export default function App() {
+export default function Home() {
   useLenis();
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
