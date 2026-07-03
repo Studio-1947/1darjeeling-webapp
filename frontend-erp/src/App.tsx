@@ -1,12 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import Login from './pages/Login';
-
-const Dashboard = () => (
-  <div className="min-h-screen bg-[#0F172A] text-white flex items-center justify-center">
-    <h1 className="text-3xl font-bold">Partner Dashboard</h1>
-  </div>
-);
+import Register from './pages/Register';
+import ProfileDashboard from './features/profile/ProfileDashboard';
 
 const CalendarSetup = () => <div>Calendar Setup</div>;
 
@@ -15,8 +11,10 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<ProfileDashboard />} />
           <Route path="/calendar" element={<CalendarSetup />} />
         </Route>
       </Routes>

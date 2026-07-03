@@ -27,8 +27,10 @@ export const drivers = pgTable('drivers', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  fullName: varchar('full_name', { length: 100 }).notNull(),
   licenseNumber: varchar('license_number', { length: 100 }).notNull().unique(),
   vehicleType: varchar('vehicle_type', { length: 50 }).notNull(),
+  profileConfig: jsonb('profile_config'),
   isAvailable: boolean('is_available').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

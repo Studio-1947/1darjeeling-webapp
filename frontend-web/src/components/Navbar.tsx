@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import type { TabType } from '../Home';
 import LoginModal from './LoginModal';
+import SignupModal from './SignupModal';
+import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 interface NavbarProps {
   activeTab: TabType;
@@ -13,6 +16,10 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const { isAuthenticated, profile, clearAuth } = useAuthStore();
+  const navigate = useNavigate();
 
   const langRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
@@ -39,10 +46,15 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
       }
     }
     window.addEventListener('scroll', handleScroll);
-    // Trigger once on mount to capture initial scroll state
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    clearAuth();
+    setIsUserOpen(false);
+    navigate('/');
+  };
 
   return (
     <header className={`fixed top-0 left-0 w-full z-40 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300 ${
@@ -52,7 +64,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
     }`}>
       {/* Airbnb Style Logo */}
       <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:justify-start">
-        <a href="#" className={`flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors duration-300 ${
+        <a href="/" className={`flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors duration-300 ${
           isScrolled ? 'text-ink' : 'text-white'
         }`}>
           <img src="/logo.png" alt="1darjeeling logo" className="h-8 w-auto object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
@@ -81,7 +93,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
 
       {/* Right Side: Host Link, Language Selector, User Menu */}
       <div className="flex items-center gap-4 mt-2 md:mt-0 md:flex-1 md:justify-end">
-        <a href="#" className={`hidden lg:block text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 ${
+        <a href="http://localhost:5174/register" className={`hidden lg:block text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 ${
           isScrolled 
             ? 'text-ink hover:bg-canvas-soft' 
             : 'text-white hover:bg-white/10'
@@ -127,46 +139,127 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
             onClick={() => setIsUserOpen(!isUserOpen)}
             className="flex items-center gap-3 bg-white border border-canvas-softer hover:shadow-md transition-all rounded-full p-1.5 pl-3 pr-1.5 cursor-pointer"
           >
-            {/* Hamburger */}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-ink">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-            {/* User Icon */}
-            <div className="w-7 h-7 bg-body-text rounded-full flex items-center justify-center text-white overflow-hidden">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mt-1">
-                <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
+            {/* Hamburger (only show if not authenticated) */}
+            {!isAuthenticated && (
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 text-ink">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
+            )}
+            
+            {/* User Icon */}
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white overflow-hidden ${isAuthenticated ? 'bg-primary' : 'bg-body-text'}`}>
+              {isAuthenticated ? (
+                <span className="text-xs font-bold uppercase">{profile?.email?.charAt(0) || 'U'}</span>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mt-1">
+                  <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
+                </svg>
+              )}
             </div>
           </button>
 
           {isUserOpen && (
             <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg border border-hairline py-2 transition-all z-50 text-ink animate-scale-up">
-              <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink">
-                Sign up
-              </button>
-              <button 
-                onClick={() => {
-                  setShowLoginModal(true);
-                  setIsUserOpen(false);
-                }}
-                className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
-              >
-                Log in
-              </button>
-              <hr className="border-hairline my-1" />
-              <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                Host your stay
-              </button>
-              <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                Help Center
-              </button>
+              {isAuthenticated ? (
+                <>
+                  <button 
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setIsUserOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Dashboard
+                  </button>
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Trips
+                  </button>
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Wishlists
+                  </button>
+                  <hr className="border-hairline my-1" />
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Host your stay
+                  </button>
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Account
+                  </button>
+                  <hr className="border-hairline my-1" />
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => {
+                      setShowSignupModal(true);
+                      setIsUserOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Sign up
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setIsUserOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Log in
+                  </button>
+                  <hr className="border-hairline my-1" />
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Host your stay
+                  </button>
+                  <button 
+                    onClick={() => {
+                      window.location.href = 'http://localhost:5174/login';
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Homestay Owner Login
+                  </button>
+                  <button 
+                    onClick={() => {
+                      window.location.href = 'http://localhost:5175/login';
+                    }}
+                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+                  >
+                    Driver Partner Login
+                  </button>
+                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                    Help Center
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
       </div>
 
       {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
+        <LoginModal 
+          onClose={() => setShowLoginModal(false)} 
+          onSwitchToSignup={() => {
+            setShowLoginModal(false);
+            setShowSignupModal(true);
+          }}
+        />
+      )}
+
+      {showSignupModal && (
+        <SignupModal 
+          onClose={() => setShowSignupModal(false)}
+          onSwitchToLogin={() => {
+            setShowSignupModal(false);
+            setShowLoginModal(true);
+          }}
+        />
       )}
     </header>
   );

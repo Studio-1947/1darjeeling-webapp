@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { api } from './api/client';
 import { stays } from './data/stays';
 import { drivers } from './data/drivers';
 import { routes } from './data/routes';
@@ -26,16 +27,81 @@ export default function Home() {
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [selectedItemType, setSelectedItemType] = useState<TabType | null>(null);
 
+  // Fetch dynamic homestays & drivers
+  const [dynamicStays, setDynamicStays] = useState<any[]>([]);
+  const [dynamicDrivers, setDynamicDrivers] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchHomestays = async () => {
+      try {
+        const res = await api.get('/api/homestay/list');
+        const formattedStays = res.data.map((h: any) => ({
+          id: h.id,
+          name: h.propertyName,
+          type: 'Homestay',
+          area: h.essentialsConfig?.location || 'Darjeeling',
+          priceRange: h.essentialsConfig?.basePrice ? `₹${h.essentialsConfig.basePrice} / night` : 'Price on request',
+          blurb: h.essentialsConfig?.amenities?.join(', ') || 'A beautiful homestay.',
+          photo: 'https://images.unsplash.com/photo-1542314831-c6a420325970?auto=format&fit=crop&q=80',
+          isDynamic: true
+        }));
+        setDynamicStays(formattedStays);
+      } catch (err) {
+        console.error('Failed to fetch dynamic homestays:', err);
+      }
+    };
+    
+    const fetchDrivers = async () => {
+      try {
+        const res = await api.get('/api/driver/list');
+        const formattedDrivers = res.data.map((d: any) => {
+          const config = d.profileConfig || {};
+          let languages = ['Nepali', 'Hindi'];
+          if (config.languages) {
+            languages = config.languages.split(',').map((l: string) => l.trim());
+          }
+          
+          let routes = ['town-sightseeing'];
+          if (config.routesOperated) {
+            routes = config.routesOperated.split(',').map((r: string) => r.trim());
+          }
+
+          return {
+            id: d.id,
+            name: d.fullName,
+            vehicle: d.vehicleType,
+            licenseNumber: 'Newly Registered',
+            rating: 5.0,
+            experienceYears: Number(config.experienceYears) || 1,
+            languages,
+            routesOperated: routes,
+            portrait: '👨🏽‍✈️',
+            photo: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&q=80', // Premium driver avatar fallback
+            isDynamic: true
+          };
+        });
+        setDynamicDrivers(formattedDrivers);
+      } catch (err) {
+        console.error('Failed to fetch dynamic drivers:', err);
+      }
+    };
+    
+    fetchHomestays();
+    fetchDrivers();
+  }, []);
+
   // Search Filter
   const filteredItems = useMemo(() => {
     const query = searchQuery.toLowerCase();
     switch (activeTab) {
       case 'stays':
-        return stays.filter(
+        const allStays = [...dynamicStays, ...stays];
+        return allStays.filter(
           s => s.name.toLowerCase().includes(query) || s.area.toLowerCase().includes(query) || s.type.toLowerCase().includes(query)
         );
       case 'drivers':
-        return drivers.filter(
+        const allDrivers = [...dynamicDrivers, ...drivers];
+        return allDrivers.filter(
           d => d.name.toLowerCase().includes(query) || d.vehicle.toLowerCase().includes(query)
         );
       case 'routes':
@@ -53,7 +119,7 @@ export default function Home() {
       default:
         return [];
     }
-  }, [activeTab, searchQuery]);
+  }, [activeTab, searchQuery, dynamicStays, dynamicDrivers]);
 
   const handleOpenDetails = (item: any, type: TabType) => {
     setSelectedItem(item);
