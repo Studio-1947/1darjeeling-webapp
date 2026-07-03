@@ -36,6 +36,12 @@ export class AuthService {
     const payload = { sub: targetRecord.id, email: targetRecord.email, role };
     return {
       access_token: this.jwtService.sign(payload),
+      hasSetup: role === 'HOMESTAY' ? !!targetRecord.essentialsConfig : undefined,
+      profile: {
+        id: targetRecord.id,
+        email: targetRecord.email,
+        role,
+      }
     };
   }
 }
