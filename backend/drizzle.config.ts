@@ -6,7 +6,7 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgresql://admin:rootpassword@localhost:5432/darjeeling_db',
+    url: process.env.DATABASE_URL,
   },
   verbose: true,
   strict: true,
