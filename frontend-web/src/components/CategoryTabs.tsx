@@ -11,7 +11,11 @@ const tabs = [
   { id: 'drivers', label: 'Drivers', icon: '/driver.svg' },
   { id: 'routes', label: 'Jeep Routes', icon: '/routes.svg' },
   { id: 'cafes', label: 'Cafes', icon: '/cafe.svg' },
-  { id: 'attractions', label: 'Experiences', icon: '/experiences.svg' }
+  { id: 'attractions', label: 'Experiences', icon: '/experiences.svg' },
+  { id: 'offbeat', label: 'Offbeat Places', icon: '/offbeatplaces.svg' },
+  { id: 'food', label: 'Food & Culture', icon: '/foodculture.svg' },
+  { id: 'events', label: 'Events', icon: '/event.svg' },
+  { id: 'sound', label: 'Sound Experience', icon: '/sound.svg' }
 ] as const;
 
 export default function CategoryTabs({ activeTab, onTabChange, onSearchChange }: CategoryTabsProps) {

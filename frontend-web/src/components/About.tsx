@@ -1,9 +1,42 @@
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TiltedCard from './TiltedCard';
-import ScrollReveal from './ScrollReveal';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function About() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      // Fade in and translate up for text and statistics
+      gsap.fromTo(
+        el.querySelectorAll('.reveal-item'),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }, el);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="max-w-7xl mx-auto px-6 md:px-20 py-24 overflow-hidden">
+    <section ref={containerRef} className="max-w-7xl mx-auto px-6 md:px-20 py-24 overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         {/* Left Side: Image Card */}
         <div className="relative group flex justify-center w-full">
@@ -28,88 +61,39 @@ export default function About() {
 
         {/* Right Side: Text & Info */}
         <div className="space-y-6">
-          <ScrollReveal
-            baseOpacity={0.2}
-            enableBlur={true}
-            baseRotation={0}
-            containerClassName="!m-0 inline-block"
-            textClassName="!text-xs !font-bold !uppercase !tracking-wider !text-body-text !px-3 !py-1 !bg-canvas-soft !border !border-canvas-softer !rounded-full !inline-block"
-          >
+          <span className="reveal-item text-xs font-bold uppercase tracking-wider text-body-text px-3 py-1 bg-canvas-soft border border-canvas-softer rounded-full inline-block">
             1darjeeling
-          </ScrollReveal>
+          </span>
 
-          <ScrollReveal
-            baseOpacity={0}
-            enableBlur={true}
-            baseRotation={5}
-            blurStrength={10}
-            containerClassName="!m-0"
-            textClassName="!text-3xl md:!text-5xl !font-extrabold !text-ink !leading-tight !font-display"
-          >
+          <h2 className="reveal-item text-3xl md:text-5xl font-extrabold text-ink leading-tight font-display">
             Your authentic guide to the Queen of Hills
-          </ScrollReveal>
+          </h2>
 
-          <ScrollReveal
-            baseOpacity={0.1}
-            enableBlur={true}
-            baseRotation={0}
-            containerClassName="!m-0"
-            textClassName="!text-body-text !text-base !leading-relaxed !font-normal"
-          >
+          <p className="reveal-item text-body-text text-base leading-relaxed font-normal">
             1darjeeling connects you directly with the heart of the Himalayas. We cut out middleman commissions to empower local homeowners, experienced drivers, and cozy family-run cafes.
-          </ScrollReveal>
+          </p>
 
-          <ScrollReveal
-            baseOpacity={0.1}
-            enableBlur={true}
-            baseRotation={0}
-            containerClassName="!m-0"
-            textClassName="!text-body-text !text-base !leading-relaxed !font-normal"
-          >
+          <p className="reveal-item text-body-text text-base leading-relaxed font-normal">
             Whether you want a warm cup of tea at a heritage estate, a safe jeep journey through the winding hills, or the best thukpa recommendations in town—our curated directories bring you verified, local-first choices.
-          </ScrollReveal>
+          </p>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-6 pt-6 border-t border-canvas-softer">
             <div>
-              <ScrollReveal
-                baseOpacity={0.1}
-                enableBlur={true}
-                baseRotation={0}
-                containerClassName="!m-0"
-                textClassName="!text-2xl !font-bold !text-ink !font-display"
-              >
+              <p className="reveal-item text-2xl font-bold text-ink font-display">
                 50+
-              </ScrollReveal>
-              <ScrollReveal
-                baseOpacity={0.1}
-                enableBlur={true}
-                baseRotation={0}
-                containerClassName="!m-0"
-                textClassName="!text-xs !text-mute !font-medium"
-              >
+              </p>
+              <p className="reveal-item text-xs text-mute font-medium">
                 Cozy Homestays
-              </ScrollReveal>
+              </p>
             </div>
             <div>
-              <ScrollReveal
-                baseOpacity={0.1}
-                enableBlur={true}
-                baseRotation={0}
-                containerClassName="!m-0"
-                textClassName="!text-2xl !font-bold !text-ink !font-display"
-              >
+              <p className="reveal-item text-2xl font-bold text-ink font-display">
                 30+
-              </ScrollReveal>
-              <ScrollReveal
-                baseOpacity={0.1}
-                enableBlur={true}
-                baseRotation={0}
-                containerClassName="!m-0"
-                textClassName="!text-xs !text-mute !font-medium"
-              >
+              </p>
+              <p className="reveal-item text-xs text-mute font-medium">
                 Verified Drivers & Routes
-              </ScrollReveal>
+              </p>
             </div>
           </div>
         </div>

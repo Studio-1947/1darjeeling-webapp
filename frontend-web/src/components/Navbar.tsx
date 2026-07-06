@@ -157,6 +157,12 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
               <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
                 Host your stay
               </button>
+              <button 
+                onClick={() => window.open('http://localhost:5174', '_blank')}
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+              >
+                Register as a driver
+              </button>
               <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
                 Help Center
               </button>
