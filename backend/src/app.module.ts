@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { HomestayController } from './modules/homestay/homestay.controller';
+import { AuthModule } from './auth/auth.module.js';
+import { HomestayController } from './modules/homestay/homestay.controller.js';
 
 @Module({
   imports: [AuthModule],

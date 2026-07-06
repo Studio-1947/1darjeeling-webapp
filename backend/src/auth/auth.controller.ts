@@ -1,7 +1,7 @@
 // backend/src/auth/auth.controller.ts
 import { Controller, Post, Body, Inject } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto'; // A simple class validation file for email/password
+import { AuthService } from './auth.service.js';
+import { LoginDto } from './dto/login.dto.js'; // A simple class validation file for email/password
 
 @Controller('auth')
 export class AuthController {

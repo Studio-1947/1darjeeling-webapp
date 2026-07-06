@@ -1,6 +1,6 @@
 // backend/src/modules/homestay/homestay.controller.ts
 import { Controller, Post, UseGuards, SetMetadata } from '@nestjs/common';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
 
 @Controller('api/homestay/erp')
 @UseGuards(RolesGuard)
