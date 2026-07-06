@@ -2,12 +2,13 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private jwtService: JwtService
+    @Inject(Reflector) private reflector: Reflector,
+    @Inject(JwtService) private jwtService: JwtService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
