@@ -1,8 +1,8 @@
 // backend/src/modules/homestay/homestay.controller.ts
 import { Controller, Post, Body, UseGuards, SetMetadata, Put, Param, Get, ConflictException, NotFoundException } from '@nestjs/common';
-import { RolesGuard } from '../../auth/guards/roles.guard';
-import { db } from '../../db';
-import { homestays } from '../../db/schema';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
+import { db } from '../../db/index.js';
+import { homestays } from '../../db/schema.js';
 import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, ConflictException } from '@nestjs/common';
-import { db } from '../../db';
-import { users } from '../../db/schema';
+import { db } from '../../db/index.js';
+import { users } from '../../db/schema.js';
 import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 

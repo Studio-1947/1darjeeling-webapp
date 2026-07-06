@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Get, Put, Param, UseGuards, SetMetadata, ConflictException } from '@nestjs/common';
-import { db } from '../../db';
-import { drivers } from '../../db/schema';
+import { db } from '../../db/index.js';
+import { drivers } from '../../db/schema.js';
 import * as bcrypt from 'bcrypt';
 import { eq, or } from 'drizzle-orm';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard.js';
 
 @Controller('api/driver')
 export class DriverController {

@@ -1,6 +1,6 @@
 // backend/src/db/seed.ts
-import { db } from './index';
-import { users, homestays, drivers } from './schema';
+import { db } from './index.js';
+import { users, homestays, drivers } from './schema.js';
 import * as bcrypt from 'bcrypt';
 
 async function seed() {
