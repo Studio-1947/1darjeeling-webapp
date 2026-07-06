@@ -94,9 +94,14 @@ export default function Login() {
           </form>
         </div>
         
-        <p className="text-center mt-8 text-slate-500 font-medium">
-          Need help? <a href="#" className="text-orange-600 font-bold underline">Contact Support</a>
-        </p>
+        <div className="text-center mt-8 space-y-2">
+          <p className="text-slate-500 font-medium text-lg">
+            Don't have an account? <a href="/register" className="text-orange-600 font-bold hover:underline">Register here</a>
+          </p>
+          <p className="text-slate-500 font-medium text-sm">
+            Need help? <a href="#" className="text-orange-600 font-bold hover:underline">Contact Support</a>
+          </p>
+        </div>
 
       </div>
       

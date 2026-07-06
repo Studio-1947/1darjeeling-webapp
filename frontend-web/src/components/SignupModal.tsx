@@ -3,34 +3,41 @@ import { api } from '../api/client';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
 
-interface LoginModalProps {
+interface SignupModalProps {
   onClose: () => void;
-  onSwitchToSignup: () => void;
+  onSwitchToLogin: () => void;
 }
 
-export default function LoginModal({ onClose, onSwitchToSignup }: LoginModalProps) {
+export default function SignupModal({ onClose, onSwitchToLogin }: SignupModalProps) {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/login/user', { email, password });
-      // Note: Backend might not be sending the full 'profile' object in response yet based on the current auth.service.ts
-      // Actually, auth.service.ts only sends { access_token }. We'll just pass a dummy profile for now, 
-      // or if it does send profile, we use it.
-      setAuth(response.data.access_token, response.data.profile || { id: '1', email });
+      // 1. Register the user
+      await api.post('/api/users/register', { firstName, lastName, email, password });
+      
+      // 2. Automatically log them in
+      const loginResponse = await api.post('/auth/login/user', { email, password });
+      
+      const profile = loginResponse.data.profile || { id: 'unknown', email };
+      setAuth(loginResponse.data.access_token, profile);
+      
       onClose();
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials');
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -49,16 +56,12 @@ export default function LoginModal({ onClose, onSwitchToSignup }: LoginModalProp
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
-          <h2 className="text-base font-bold flex-1 text-center pr-9">Log in or sign up</h2>
+          <h2 className="text-base font-bold flex-1 text-center pr-9">Finish signing up</h2>
         </div>
 
         {/* Body */}
         <div className="px-6 py-8">
-          <h3 className="text-2xl font-bold tracking-tight mb-6 text-ink">
-            Welcome to 1darjeeling
-          </h3>
-
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium border border-red-100">
                 {error}
@@ -67,6 +70,34 @@ export default function LoginModal({ onClose, onSwitchToSignup }: LoginModalProp
             
             <div className="rounded-xl border border-mute overflow-hidden focus-within:border-ink transition-colors">
               <div className="relative border-b border-mute">
+                <input
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full pt-6 pb-2 px-4 outline-none bg-transparent peer text-ink placeholder-transparent"
+                  placeholder="First name"
+                />
+                <label className="absolute left-4 top-2 text-xs text-mute font-medium peer-placeholder-shown:text-base peer-placeholder-shown:top-4 transition-all pointer-events-none">
+                  First name
+                </label>
+              </div>
+              <div className="relative border-b border-mute">
+                <input
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full pt-6 pb-2 px-4 outline-none bg-transparent peer text-ink placeholder-transparent"
+                  placeholder="Last name"
+                />
+                <label className="absolute left-4 top-2 text-xs text-mute font-medium peer-placeholder-shown:text-base peer-placeholder-shown:top-4 transition-all pointer-events-none">
+                  Last name
+                </label>
+              </div>
+              <p className="px-4 py-2 text-xs text-mute">Make sure it matches the name on your government ID.</p>
+              
+              <div className="relative border-t border-b border-mute">
                 <input
                   type="email"
                   required
@@ -95,7 +126,7 @@ export default function LoginModal({ onClose, onSwitchToSignup }: LoginModalProp
             </div>
 
             <p className="text-xs text-body-text mt-4 leading-relaxed">
-              We'll call or text you to confirm your number. Standard message and data rates apply. <a href="#" className="font-semibold underline">Privacy Policy</a>
+              By selecting <strong>Agree and continue</strong>, I agree to 1darjeeling's Terms of Service, Payments Terms of Service, and Nondiscrimination Policy and acknowledge the Privacy Policy.
             </p>
 
             <button
@@ -103,36 +134,21 @@ export default function LoginModal({ onClose, onSwitchToSignup }: LoginModalProp
               disabled={loading}
               className="btn-airbnb-primary mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {loading ? 'Logging in...' : 'Continue'}
+              {loading ? 'Creating account...' : 'Agree and continue'}
             </button>
           </form>
-
+          
           <div className="mt-6 text-center">
             <p className="text-sm text-ink">
-              Don't have an account?{' '}
+              Already have an account?{' '}
               <button 
                 type="button" 
-                onClick={onSwitchToSignup}
+                onClick={onSwitchToLogin}
                 className="font-semibold underline hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
               >
-                Sign up
+                Log in
               </button>
             </p>
-          </div>
-
-          <div className="my-6 flex items-center justify-center gap-4 text-xs font-medium text-mute">
-            <span className="flex-1 h-px bg-hairline"></span>
-            <span>or</span>
-            <span className="flex-1 h-px bg-hairline"></span>
-          </div>
-
-          <div className="space-y-3">
-            <button className="w-full flex items-center justify-center gap-3 py-3 border border-ink rounded-lg font-semibold hover:bg-canvas-soft transition-colors text-ink">
-              Continue with Google
-            </button>
-            <button className="w-full flex items-center justify-center gap-3 py-3 border border-ink rounded-lg font-semibold hover:bg-canvas-soft transition-colors text-ink">
-              Continue with Apple
-            </button>
           </div>
         </div>
       </div>

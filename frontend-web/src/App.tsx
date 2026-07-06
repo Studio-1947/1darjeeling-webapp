@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import HomestayView from './pages/HomestayView';
 
 // Basic dashboard placeholder for the consumer
 const Dashboard = () => {
@@ -18,6 +19,9 @@ export default function App() {
       <Routes>
         {/* Public Route - The main landing page */}
         <Route path="/" element={<Home />} />
+        
+        {/* Public Route - Homestay View */}
+        <Route path="/homestay/:id" element={<HomestayView />} />
         
         {/* Protected Dashboard Route */}
         <Route element={<ProtectedRoute />}>
