@@ -5,6 +5,7 @@ import { drivers } from './data/drivers';
 import { routes } from './data/routes';
 import { cafes } from './data/cafes';
 import { attractions } from './data/attractions';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -16,12 +17,19 @@ import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
 import { useLenis } from './hooks/useLenis';
 
-export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions';
+export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions' | 'offbeat' | 'food' | 'events' | 'sound';
 
 export default function Home() {
   useLenis();
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   // Modal & Booking States
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
@@ -116,6 +124,11 @@ export default function Home() {
         return attractions.filter(
           a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query)
         );
+      case 'offbeat':
+      case 'food':
+      case 'events':
+      case 'sound':
+        return [1]; // non-empty dummy to bypass general empty-check
       default:
         return [];
     }
@@ -153,6 +166,7 @@ export default function Home() {
         activeTab={activeTab}
         filteredItems={filteredItems}
         onSelect={handleOpenDetails}
+        searchQuery={searchQuery}
       />
 
       {selectedItem && selectedItemType && (

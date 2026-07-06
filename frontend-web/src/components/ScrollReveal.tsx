@@ -126,12 +126,13 @@ export default function ScrollReveal({
       }
     }, el);
 
-    // Recalculate ScrollTrigger positions after a short delay so that
-    // fonts, images and layout shifts from other components are settled.
-    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 100);
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh();
+    });
+    resizeObserver.observe(document.body);
 
     return () => {
-      clearTimeout(refreshTimer);
+      resizeObserver.disconnect();
       ctx.revert();
     };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength, scrub]);

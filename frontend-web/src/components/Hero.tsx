@@ -15,7 +15,7 @@ export default function Hero() {
       <div className="relative z-20 text-center px-6 max-w-3xl select-none">
         <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight drop-shadow-md mb-4 font-display min-h-[2.5em] md:min-h-[2em]" style={{ color: 'white' }}>
           <Typewriter
-            text="Find Your Perfect Stay in The Queen Of Hills"
+            text="Find Your Perfect Stay In The Queen Of Hills"
             speed={40}
             delay={300}
             showCursor={true}
