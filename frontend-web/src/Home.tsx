@@ -14,14 +14,30 @@ import CategoryTabs from './components/CategoryTabs';
 import Footer from './components/Footer';
 import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
+import OnboardingModal from './components/onboarding/OnboardingModal';
+import { useOnboardingStore } from './store/onboardingStore';
 import { useLenis } from './hooks/useLenis';
 
 export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions' | 'offbeat' | 'food' | 'events' | 'sound';
 
 export default function Home() {
-  useLenis();
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // First-visit onboarding questionnaire.
+  // `?onboarding=1` forces it open; `?onboarding=reset` also wipes any saved answers.
+  const onboardingStatus = useOnboardingStore((s) => s.status);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const param = new URLSearchParams(window.location.search).get('onboarding');
+    if (param === 'reset') {
+      useOnboardingStore.getState().reset();
+      return true;
+    }
+    return onboardingStatus === 'incomplete' || param !== null;
+  });
+
+  // Freeze page scrolling while the questionnaire is open.
+  useLenis(showOnboarding);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -102,6 +118,8 @@ export default function Home() {
         onSelect={handleOpenDetails}
         searchQuery={searchQuery}
       />
+
+      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
 
       {selectedItem && selectedItemType && (
         <BookingModal
