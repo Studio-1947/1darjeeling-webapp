@@ -5,9 +5,9 @@ export type UserRole = 'USER' | 'HOMESTAY' | 'DRIVER';
 export interface UserProfile {
   id: string;
   email: string;
-  firstName: string | null;
-  lastName: string | null;
-  createdAt: Date;
+  firstName?: string | null;
+  lastName?: string | null;
+  createdAt?: Date;
 }
 
 export interface HomestayProfile {
