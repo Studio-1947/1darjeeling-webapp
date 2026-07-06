@@ -72,6 +72,7 @@ export default function HomestayView() {
               We pass an empty setter since it will never be called.
             */}
             <PropertyDetails
+              email={homestay.email || 'Hidden for privacy'}
               isEditing={false}
               form={form}
               setForm={() => {}}
