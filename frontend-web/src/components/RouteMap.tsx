@@ -30,7 +30,6 @@ function FitBounds({ coords }: { coords: [number, number][] }) {
 
 export default function RouteMap({ route }: RouteMapProps) {
   const [result, setResult] = useState<OsrmResult | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   const waypoints: RoutePlace[] = route ? routeGeo[route.id] ?? [] : [];
@@ -47,7 +46,6 @@ export default function RouteMap({ route }: RouteMapProps) {
       return;
     }
     setResult(null);
-    setLoading(true);
     let cancelled = false;
     const coordStr = routeGeo[route.id]
       .map((p) => `${p.coords[1]},${p.coords[0]}`)
@@ -68,9 +66,6 @@ export default function RouteMap({ route }: RouteMapProps) {
       })
       .catch(() => {
         if (!cancelled) setError(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
       });
     return () => {
       cancelled = true;
@@ -170,41 +165,6 @@ export default function RouteMap({ route }: RouteMapProps) {
           </CircleMarker>
         )}
       </MapContainer>
-
-      {/* Info panel */}
-      <div className="absolute top-3 right-3 z-[1000] max-w-[calc(100%-5rem)]">
-        {route ? (
-          <div className="bg-canvas/95 backdrop-blur rounded-xl shadow-lg border border-canvas-softer px-4 py-3 space-y-1">
-            <p className="text-sm font-bold text-ink leading-tight">
-              {route.from} ⇄ {route.to}
-            </p>
-            {loading && <p className="text-xs text-mute">Calculating route…</p>}
-            {result && (
-              <p className="text-xs text-body-text">
-                <span className="font-semibold text-primary">{result.distanceKm.toFixed(0)} km</span>
-                <span className="text-mute"> by road · </span>
-                <span className="font-semibold text-primary">{route.duration}</span>
-                <span className="text-mute"> drive</span>
-              </p>
-            )}
-            {error && (
-              <p className="text-xs text-body-text">
-                <span className="font-semibold text-primary">{route.distance}</span>
-                {' · '}
-                <span className="font-semibold text-primary">{route.duration}</span>
-                <span className="text-mute"> (approx.)</span>
-              </p>
-            )}
-            <p className="text-[11px] text-mute">{route.road}</p>
-          </div>
-        ) : (
-          <div className="bg-canvas/95 backdrop-blur rounded-xl shadow-lg border border-canvas-softer px-4 py-2.5">
-            <p className="text-xs font-semibold text-body-text">
-              Select a route to see it on the map
-            </p>
-          </div>
-        )}
-      </div>
     </div>
   );
 }

@@ -90,7 +90,7 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
         role="dialog"
         aria-label={title}
       >
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           {/* Hero header — photo under a primary-tinted gradient with the title overlaid */}
           <div className="relative h-60 shrink-0 overflow-hidden">
             {item.photo ? (

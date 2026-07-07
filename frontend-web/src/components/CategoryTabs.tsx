@@ -9,7 +9,7 @@ interface CategoryTabsProps {
 const tabs = [
   { id: 'stays', label: 'Homestays', icon: '/homestay.svg' },
   { id: 'drivers', label: 'Drivers', icon: '/driver.svg' },
-  { id: 'routes', label: 'Jeep Routes', icon: '/routes.svg' },
+  { id: 'routes', label: 'Routes', icon: '/routes.svg' },
   { id: 'cafes', label: 'Cafes', icon: '/cafe.svg' },
   { id: 'attractions', label: 'Experiences', icon: '/experiences.svg' },
   { id: 'offbeat', label: 'Offbeat Places', icon: '/offbeatplaces.svg' },
