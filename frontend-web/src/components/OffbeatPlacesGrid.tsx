@@ -9,7 +9,7 @@ export interface OffbeatPlace {
   tags: string[];
 }
 
-export const offbeatPlacesData: OffbeatPlace[] = [
+const offbeatPlacesData: OffbeatPlace[] = [
   {
     name: 'Tinchuley',
     distance: '32 km',
@@ -49,9 +49,10 @@ export const offbeatPlacesData: OffbeatPlace[] = [
 
 interface OffbeatPlacesGridProps {
   searchQuery: string;
+  onSelect?: (place: OffbeatPlace) => void;
 }
 
-export default function OffbeatPlacesGrid({ searchQuery }: OffbeatPlacesGridProps) {
+export default function OffbeatPlacesGrid({ searchQuery, onSelect }: OffbeatPlacesGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const filteredPlaces = offbeatPlacesData.filter(place =>
     place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -91,9 +92,10 @@ export default function OffbeatPlacesGrid({ searchQuery }: OffbeatPlacesGridProp
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredPlaces.map((place) => (
-          <div 
+          <div
             key={place.name}
-            className="offbeat-card group relative bg-white border border-canvas-softer hover:border-primary/20 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden"
+            onClick={() => onSelect?.(place)}
+            className="offbeat-card group relative bg-white border border-canvas-softer hover:border-primary/20 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer"
           >
             {/* Soft decorative background gradient on hover */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />

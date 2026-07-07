@@ -44,7 +44,7 @@ export default function TabContent({ activeTab, filteredItems, onSelect, searchQ
             <ExperiencesGrid items={filteredItems as any} onSelect={(att) => onSelect(att, 'attractions')} />
           )}
           {activeTab === 'offbeat' && (
-            <OffbeatPlacesGrid searchQuery={searchQuery} />
+            <OffbeatPlacesGrid searchQuery={searchQuery} onSelect={(place) => onSelect(place, 'offbeat')} />
           )}
           {activeTab === 'food' && (
             <FoodCulture />

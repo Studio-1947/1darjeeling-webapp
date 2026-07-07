@@ -15,6 +15,7 @@ import CategoryTabs from './components/CategoryTabs';
 import Footer from './components/Footer';
 import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
+import DetailSidebar from './components/DetailSidebar';
 import OnboardingModal from './components/onboarding/OnboardingModal';
 import { useOnboardingStore } from './store/onboardingStore';
 import { useLenis } from './hooks/useLenis';
@@ -50,6 +51,7 @@ export default function Home() {
   // Modal & Booking States
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [selectedItemType, setSelectedItemType] = useState<TabType | null>(null);
+  const [showBooking, setShowBooking] = useState(false);
 
   // Fetch dynamic homestays & drivers
   const [dynamicStays, setDynamicStays] = useState<any[]>([]);
@@ -158,6 +160,7 @@ export default function Home() {
   const handleCloseDetails = () => {
     setSelectedItem(null);
     setSelectedItemType(null);
+    setShowBooking(false);
   };
 
   return (
@@ -188,10 +191,19 @@ export default function Home() {
       {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
 
       {selectedItem && selectedItemType && (
+        <DetailSidebar
+          item={selectedItem}
+          type={selectedItemType}
+          onClose={handleCloseDetails}
+          onBook={() => setShowBooking(true)}
+        />
+      )}
+
+      {showBooking && selectedItem && selectedItemType && (
         <BookingModal
           selectedItem={selectedItem}
           selectedItemType={selectedItemType}
-          onClose={handleCloseDetails}
+          onClose={() => setShowBooking(false)}
         />
       )}
 
