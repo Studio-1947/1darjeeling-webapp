@@ -42,9 +42,9 @@ function InfoRow({ icon, children }: { icon: React.ReactNode; children: React.Re
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <span className="text-amber-500 tracking-tight" aria-label={`${rating} out of 5`}>
-      {'★★★★★'.slice(0, Math.round(rating))}
-      <span className="text-canvas-softer">{'★★★★★'.slice(Math.round(rating))}</span>
+    <span className="text-amber-500 tracking-tight text-sm" aria-label={`${rating} out of 5`}>
+      {'★'.repeat(Math.round(rating))}
+      <span className="text-canvas-softer">{'★'.repeat(5 - Math.round(rating))}</span>
     </span>
   );
 }
@@ -94,7 +94,12 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
           {/* Hero header — photo under a primary-tinted gradient with the title overlaid */}
           <div className="relative h-60 shrink-0 overflow-hidden">
             {item.photo ? (
-              <img src={item.photo} alt={title} className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src={item.photo}
+                alt={title}
+                style={{ objectPosition: item.photoPosition || 'center' }}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark" />
             )}
@@ -130,50 +135,52 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
           <div className="border-b border-canvas-softer">
             {type === 'stays' && (
               <>
-                <InfoRow icon="📍">{item.area}, Darjeeling, West Bengal</InfoRow>
-                <InfoRow icon="💰">{item.priceRange}</InfoRow>
-                {item.blurb && <InfoRow icon="🏡">{item.blurb}</InfoRow>}
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.area}, Darjeeling, West Bengal</InfoRow>
+                <InfoRow icon={<img src="/price.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.priceRange}</InfoRow>
+                {item.blurb && <InfoRow icon={<img src="/rooms.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.blurb}</InfoRow>}
               </>
             )}
             {type === 'drivers' && (
               <>
-                <InfoRow icon="📍">Picks up from Chowk Bazaar motor stand, Darjeeling</InfoRow>
-                <InfoRow icon="🚙">{item.vehicle} · {item.experienceYears} yrs experience</InfoRow>
-                <InfoRow icon="🗣️">Speaks {item.languages?.join(', ')}</InfoRow>
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Picks up from Chowk Bazaar motor stand, Darjeeling</InfoRow>
+                <InfoRow icon={<img src="/route.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.vehicle} · {item.experienceYears} yrs experience</InfoRow>
+                <InfoRow icon={<img src="/language.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Speaks {item.languages?.join(', ')}</InfoRow>
                 {item.routesOperated?.length > 0 && (
-                  <InfoRow icon="🛣️">Operates: {item.routesOperated.join(', ')}</InfoRow>
+                  <InfoRow icon={<img src="/route.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Operates: {item.routesOperated.join(', ')}</InfoRow>
                 )}
               </>
             )}
             {type === 'routes' && (
               <>
-                <InfoRow icon="📍">{item.road}</InfoRow>
-                <InfoRow icon="🕐">{item.distance} · {item.duration}</InfoRow>
-                {item.note && <InfoRow icon="💡">{item.note}</InfoRow>}
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.road}</InfoRow>
+                <InfoRow icon={<img src="/time.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance} · {item.duration}</InfoRow>
+                {item.note && <InfoRow icon={<img src="/verified.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.note}</InfoRow>}
               </>
             )}
             {type === 'cafes' && (
               <>
-                <InfoRow icon="📍">{item.area}, Darjeeling, West Bengal</InfoRow>
-                <InfoRow icon="🕐">Open · {item.hours}</InfoRow>
-                <InfoRow icon="🍽️">{item.specialty} · {item.priceRange}</InfoRow>
-                <InfoRow icon="🏛️">Established {item.established}</InfoRow>
-                {item.blurb && <InfoRow icon="✨">{item.blurb}</InfoRow>}
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.area}, Darjeeling, West Bengal</InfoRow>
+                <InfoRow icon={<img src="/time.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Open · {item.hours}</InfoRow>
+                <InfoRow icon={<img src="/menu.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.specialty} · {item.priceRange}</InfoRow>
+                <InfoRow icon={<img src="/established.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Established {item.established}</InfoRow>
+                {item.blurb && <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.blurb}</InfoRow>}
               </>
             )}
             {type === 'attractions' && (
               <>
-                <InfoRow icon="📍">{item.distance}</InfoRow>
-                {item.blurb && <InfoRow icon="✨">{item.blurb}</InfoRow>}
-                {item.tip && <InfoRow icon="💡">{item.tip}</InfoRow>}
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance}</InfoRow>
+                {item.blurb && <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.blurb}</InfoRow>}
+                {item.tip && <InfoRow icon={<img src="/verified.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.tip}</InfoRow>}
               </>
             )}
             {type === 'offbeat' && (
               <>
-                <InfoRow icon="📍">{item.distance} from Darjeeling · {item.time} drive</InfoRow>
-                {item.description && <InfoRow icon="✨">{item.description}</InfoRow>}
+                <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance} from Darjeeling · {item.time} drive</InfoRow>
+                {item.description && <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.description}</InfoRow>}
                 {item.tags?.length > 0 && (
-                  <InfoRow icon="🏷️">{item.tags.map((t: string) => `#${t}`).join('  ')}</InfoRow>
+                  <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>
+                    {item.tags.map((t: string) => `#${t}`).join('  ')}
+                  </InfoRow>
                 )}
               </>
             )}

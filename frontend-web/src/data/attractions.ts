@@ -89,4 +89,13 @@ export const attractions: Attraction[] = [
     tip: "Plan 4–5 days round trip. April brings the ridge's rhododendron forests into full bloom.",
     photo: "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/10/7d/3a/78.jpg",
   },
+  {
+    id: "rock-garden",
+    name: "Ganga Maya Park & Rock Garden",
+    category: "Nature park",
+    distance: "10 km from town",
+    blurb: "A terraced garden built around a multi-level natural waterfall, featuring boating facilities, flowering bridges, and pathways.",
+    tip: "The drive down is extremely steep but scenic. Combine both gardens in a single trip.",
+    photo: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80",
+  },
 ];
