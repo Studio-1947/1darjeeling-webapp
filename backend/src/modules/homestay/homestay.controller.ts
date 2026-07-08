@@ -1,5 +1,5 @@
 // backend/src/modules/homestay/homestay.controller.ts
-import { Controller, Body, UseGuards, SetMetadata, Put, Param, Get, NotFoundException } from '@nestjs/common';
+import { Controller, Body, UseGuards, SetMetadata, Put, Param, Get, NotFoundException, Req, ForbiddenException } from '@nestjs/common';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { db } from '../../db/index.js';
 import { users } from '../../db/schema.js';
@@ -50,7 +50,10 @@ export class HomestayController {
   @Put(':id/setup')
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['HOMESTAY', 'homestay'])
-  async saveSetup(@Param('id') id: string, @Body() config: any) {
+  async saveSetup(@Param('id') id: string, @Body() config: any, @Req() request: any) {
+    if (request.user.sub !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
     await db.update(users)
       .set({ providerConfig: config })
       .where(eq(users.id, id));

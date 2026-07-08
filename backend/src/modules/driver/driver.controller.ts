@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Put, Param, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Body, Get, Put, Param, UseGuards, SetMetadata, Req, ForbiddenException } from '@nestjs/common';
 import { db } from '../../db/index.js';
 import { users } from '../../db/schema.js';
 import { eq, and } from 'drizzle-orm';
@@ -40,7 +40,10 @@ export class DriverController {
   @Put(':id/setup')
   @UseGuards(RolesGuard)
   @SetMetadata('roles', ['DRIVER', 'driver'])
-  async updateSetup(@Param('id') id: string, @Body() config: any) {
+  async updateSetup(@Param('id') id: string, @Body() config: any, @Req() request: any) {
+    if (request.user.sub !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
     await db.update(users)
       .set({ providerConfig: config })
       .where(eq(users.id, id));

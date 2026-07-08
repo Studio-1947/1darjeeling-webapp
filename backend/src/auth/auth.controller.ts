@@ -1,11 +1,12 @@
 // backend/src/auth/auth.controller.ts
-import { Controller, Post, Body, Inject, BadRequestException, Param, Put } from '@nestjs/common';
+import { Controller, Post, Body, Inject, BadRequestException, Param, Put, UseGuards, Req, ForbiddenException } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
+import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 
 @Controller('auth')
 export class AuthController {
@@ -30,10 +31,15 @@ export class AuthController {
   }
 
   @Put(':id/setup')
-  async setupProvider(@Param('id') id: string, @Body() dto: { role: string, profileConfig: any }) {
+  @UseGuards(JwtAuthGuard)
+  async setupProvider(@Param('id') id: string, @Body() dto: { role: string, profileConfig: any }, @Req() request: any) {
+    if (request.user.sub !== id) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
+    
     if (!dto.role || !dto.profileConfig) throw new BadRequestException('Role and profile config required');
     
-    if (!['homestay', 'driver', 'cafe', 'tourist'].includes(dto.role)) {
+    if (!['homestay', 'driver', 'cafe', 'tourist', 'provider-pending'].includes(dto.role)) {
       throw new BadRequestException('Invalid service provider role');
     }
 
