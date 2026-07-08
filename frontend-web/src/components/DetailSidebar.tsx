@@ -182,7 +182,7 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
               <>
                 <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance}</InfoRow>
                 {item.blurb && <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.blurb}</InfoRow>}
-                {item.tip && <InfoRow icon={<img src="/tips.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.tip}</InfoRow>}
+                {item.tip && <InfoRow icon={<img src="/tip.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.tip}</InfoRow>}
               </>
             )}
             {type === 'offbeat' && (

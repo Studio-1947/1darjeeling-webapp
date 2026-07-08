@@ -66,7 +66,7 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               {/* Speaks Languages */}
               <div className="flex items-start gap-2 text-xs text-body-text">
                 <img src="/language.svg" className="w-5.5 h-5.5 object-contain shrink-0" alt="" />
-                <span><strong>Speaks:</strong> {driver.languages.join(', ')}</span>
+                <span> {driver.languages.join(', ')}</span>
               </div>
 
               {/* License plate (subtle) */}

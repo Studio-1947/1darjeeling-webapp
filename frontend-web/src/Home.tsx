@@ -16,8 +16,6 @@ import Footer from './components/Footer';
 import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
 import DetailSidebar from './components/DetailSidebar';
-import OnboardingModal from './components/onboarding/OnboardingModal';
-import { useOnboardingStore } from './store/onboardingStore';
 import { useLenis } from './hooks/useLenis';
 import { useAuthStore } from './store/authStore';
 import UserAuthModal from './components/UserAuthModal';
@@ -30,20 +28,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // First-visit onboarding questionnaire.
-  // `?onboarding=1` forces it open; `?onboarding=reset` also wipes any saved answers.
-  const onboardingStatus = useOnboardingStore((s) => s.status);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    const param = new URLSearchParams(window.location.search).get('onboarding');
-    if (param === 'reset') {
-      useOnboardingStore.getState().reset();
-      return true;
-    }
-    return onboardingStatus === 'incomplete' || param !== null;
-  });
-
-  // Freeze page scrolling while the questionnaire is open.
-  useLenis(showOnboarding);
+  useLenis(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -260,8 +245,6 @@ export default function Home() {
       </div>
 
       {showAuthModal && <UserAuthModal onClose={() => setShowAuthModal(false)} />}
-
-      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
 
       {selectedItem && selectedItemType && (
         <DetailSidebar
