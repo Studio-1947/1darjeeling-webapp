@@ -12,10 +12,10 @@ export class DriverController {
     const allDrivers = await db.select().from(users).where(eq(users.role, 'driver'));
     return allDrivers.map(d => ({
       id: d.id,
-      fullName: (d.profileConfig as any)?.fullName || d.firstName,
-      vehicleType: (d.profileConfig as any)?.vehicleType,
-      isAvailable: (d.profileConfig as any)?.isAvailable || false,
-      profileConfig: d.profileConfig || {},
+      fullName: (d.providerConfig as any)?.driverName || d.firstName,
+      vehicleType: (d.providerConfig as any)?.vehicleType,
+      isAvailable: true,
+      providerConfig: d.providerConfig || {},
     }));
   }
 
@@ -30,10 +30,10 @@ export class DriverController {
     return {
       id: driver.id,
       email: driver.email,
-      fullName: (driver.profileConfig as any)?.fullName || driver.firstName,
-      licenseNumber: (driver.profileConfig as any)?.licenseNumber,
-      vehicleType: (driver.profileConfig as any)?.vehicleType,
-      profileConfig: driver.profileConfig || {},
+      fullName: (driver.providerConfig as any)?.driverName || driver.firstName,
+      licenseNumber: (driver.providerConfig as any)?.registrationNumber,
+      vehicleType: (driver.providerConfig as any)?.vehicleType,
+      providerConfig: driver.providerConfig || {},
     };
   }
 
@@ -42,7 +42,7 @@ export class DriverController {
   @SetMetadata('roles', ['DRIVER', 'driver'])
   async updateSetup(@Param('id') id: string, @Body() config: any) {
     await db.update(users)
-      .set({ profileConfig: config })
+      .set({ providerConfig: config })
       .where(eq(users.id, id));
     return { success: true };
   }

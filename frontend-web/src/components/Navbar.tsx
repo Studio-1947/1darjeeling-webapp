@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import type { TabType } from '../Home';
-import LoginModal from './LoginModal';
-import SignupModal from './SignupModal';
+import UserAuthModal from './UserAuthModal';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client';
@@ -22,8 +21,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const [dynamicStays, setDynamicStays] = useState<any[]>([]);
@@ -321,7 +319,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
         {/* General User Login / Sign Up - Only show if not authenticated */}
         {!isAuthenticated && (
           <button 
-            onClick={() => setShowLoginModal(true)}
+            onClick={() => setShowAuthModal(true)}
             className={`hidden lg:block text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-300 border bg-transparent cursor-pointer ${
             isSolid
               ? 'text-ink border-ink hover:bg-ink hover:text-white' 
@@ -396,35 +394,38 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
             <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg border border-hairline py-2 transition-all z-50 text-ink animate-scale-up">
               {isAuthenticated ? (
                 <>
-                  <button 
-                    onClick={() => {
-                      navigate('/dashboard');
-                      setIsUserOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink"
-                  >
-                    Dashboard
-                  </button>
+                  {(['homestay', 'driver', 'cafe'].includes(profile?.role || '') || (profile?.providerConfig && Object.keys(profile.providerConfig).length > 0)) && (
+                    <button 
+                      onClick={() => {
+                        navigate('/dashboard');
+                        setIsUserOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink"
+                    >
+                      Dashboard
+                    </button>
+                  )}
                   
-                  {!['homestay', 'driver', 'cafe', 'provider-pending'].includes(profile?.role || '') && (
+                  {profile?.role !== 'admin' && (
                     <>
-                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                        Trips
-                      </button>
-                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                        Wishlists
-                      </button>
+                      {(!['homestay', 'driver', 'cafe', 'provider-pending'].includes(profile?.role || '') && !(profile?.providerConfig && Object.keys(profile.providerConfig).length > 0)) && (
+                        <>
+                          <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                            Trips
+                          </button>
+                          <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                            Wishlists
+                          </button>
+                        </>
+                      )}
                       <hr className="border-hairline my-1" />
                       <button 
                         onClick={() => {
                           setIsUserOpen(false);
-                          navigate('/partner');
+                          setShowAuthModal(true);
                         }}
                         className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
                       >
-                        Partner Log in / Sign up
-                      </button>
-                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
                         Account
                       </button>
                     </>
@@ -458,23 +459,10 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
         </div>
       </div>
 
-      {showLoginModal && (
-        <LoginModal 
-          onClose={() => setShowLoginModal(false)} 
-          onSwitchToSignup={() => {
-            setShowLoginModal(false);
-            setShowSignupModal(true);
-          }}
-        />
-      )}
-
-      {showSignupModal && (
-        <SignupModal 
-          onClose={() => setShowSignupModal(false)}
-          onSwitchToLogin={() => {
-            setShowSignupModal(false);
-            setShowLoginModal(true);
-          }}
+      {showAuthModal && (
+        <UserAuthModal 
+          onClose={() => setShowAuthModal(false)} 
+          initialStep={isAuthenticated ? 'SETUP' : 'PHONE'}
         />
       )}
     </header>

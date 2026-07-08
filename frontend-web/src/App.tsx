@@ -6,6 +6,8 @@ import ProviderPortal from './pages/ProviderPortal';
 
 import Dashboard from './pages/Dashboard';
 
+import AdminPortal from './pages/AdminPortal';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,6 +20,9 @@ export default function App() {
         
         {/* Public Route - Provider Registration */}
         <Route path="/partner" element={<ProviderPortal />} />
+        
+        {/* Hidden Admin Route */}
+        <Route path="/admin" element={<AdminPortal />} />
         
         {/* Protected Dashboard Route */}
         <Route element={<ProtectedRoute />}>

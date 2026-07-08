@@ -35,7 +35,7 @@ export default function ProviderStep1OTP({ onSuccess }: ProviderStep1OTPProps) {
     setError('');
     
     try {
-      const { data } = await api.post('/auth/provider/send-otp', { phone });
+      const { data } = await api.post('/auth/send-otp', { phone });
       
       if (mode === 'REGISTER' && !data.isNewUser) {
         setError('This number is already registered. Please login instead.');
@@ -62,8 +62,8 @@ export default function ProviderStep1OTP({ onSuccess }: ProviderStep1OTPProps) {
     setLoading(true);
     setError('');
     try {
-      const payload = mode === 'REGISTER' ? { phone, otp, name } : { phone, otp };
-      const { data } = await api.post('/auth/provider/verify-otp', payload);
+      const payload = mode === 'REGISTER' ? { phone, otp, name, role: 'provider' } : { phone, otp, role: 'provider' };
+      const { data } = await api.post('/auth/verify-otp', payload);
       setAuth(data.access_token, data.profile);
       
       onSuccess();
