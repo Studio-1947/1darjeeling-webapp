@@ -6,6 +6,16 @@ interface DriversGridProps {
   onSelect: (driver: Driver) => void;
 }
 
+const getVehicleLogo = (vehicleName: string) => {
+  const name = (vehicleName || '').toLowerCase();
+  if (name.includes('mahindra')) return '/mahindra.svg';
+  if (name.includes('tata')) return '/tata.svg';
+  if (name.includes('land rover')) return '/landrover.svg';
+  if (name.includes('toyota')) return '/toyota.svg';
+  if (name.includes('maruti') || name.includes('suzuki')) return '/maruti.svg';
+  return '/route.svg';
+};
+
 export default function DriversGrid({ items, onSelect }: DriversGridProps) {
   const gridRef = useCardAnimation();
 
@@ -38,8 +48,7 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
             </span>
 
             {/* Experience Years Badge */}
-            <span className="absolute bottom-3 left-4 bg-white text-ink text-xs font-semibold flex items-center gap-1.5 px-2.5 py-1 rounded-md shadow-sm border border-canvas-softer">
-              <img src="/verified.svg" className="w-5.5 h-5.5 object-contain shrink-0" alt="" />
+            <span className="absolute bottom-3 left-4 bg-white text-ink text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm border border-canvas-softer">
               {driver.experienceYears} Years Exp
             </span>
           </div>
@@ -47,10 +56,11 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
           {/* Card Content Section */}
           <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <h3 className="text-xl font-bold text-ink group-hover:text-primary transition-colors duration-200">
                   {driver.name}
                 </h3>
+                <img src="/verified.svg" className="w-4 h-4 object-contain shrink-0" alt="Verified" />
               </div>
 
               {/* Speaks Languages */}
@@ -65,12 +75,16 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               </p>
 
               {/* Vehicle Type */}
-              <div className="flex items-start gap-2 text-xs text-body-text">
-                <img src="/route.svg" className="w-5.5 h-5.5 object-contain shrink-0" alt="" />
-                <span><strong>Vehicle:</strong> {driver.vehicle}</span>
+              <div className="flex items-center gap-2 text-xs text-body-text">
+                <img 
+                  src={getVehicleLogo(driver.vehicle)} 
+                  className={`${driver.vehicle.toLowerCase().includes('land rover') ? 'w-9.5 h-7.5' : 'w-7.5 h-7.5'} object-contain shrink-0`} 
+                  alt="" 
+                />
+                <span> {driver.vehicle}</span>
               </div>
 
-              {/* Routes Operated */}
+              {/* Routes Operated  */}
               {driver.routesOperated && driver.routesOperated.length > 0 && (
                 <div className="space-y-1.5 pt-1">
                   <p className="text-[10px] font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">

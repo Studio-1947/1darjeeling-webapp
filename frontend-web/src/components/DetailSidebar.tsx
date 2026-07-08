@@ -5,6 +5,16 @@ import type { TabType } from '../Home';
 import RouteMap from './RouteMap';
 import { getPlaceCoords, DRIVER_STAND } from '../data/placeGeo';
 
+const getVehicleLogo = (vehicleName: string) => {
+  const name = (vehicleName || '').toLowerCase();
+  if (name.includes('mahindra')) return '/mahindra.svg';
+  if (name.includes('tata')) return '/tata.svg';
+  if (name.includes('land rover')) return '/landrover.svg';
+  if (name.includes('toyota')) return '/toyota.svg';
+  if (name.includes('maruti') || name.includes('suzuki')) return '/maruti.svg';
+  return '/route.svg';
+};
+
 interface DetailSidebarProps {
   item: any;
   type: TabType;
@@ -117,19 +127,21 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
           </div>
 
           {/* Name / rating block */}
-          <div className="px-6 pt-5 pb-4 border-b border-canvas-softer">
-            <p className="text-sm text-body-text">{TYPE_LABEL[type]}</p>
-            <div className="flex items-center gap-2 mt-1.5 text-sm">
-              {rating !== null && (
-                <>
-                  <span className="font-semibold text-ink">{rating.toFixed(1)}</span>
-                  <Stars rating={rating} />
-                  <span className="text-mute">·</span>
-                </>
-              )}
-              <span className="text-body-text">{subtitle}</span>
+          {type !== 'routes' && (
+            <div className="px-6 pt-5 pb-4 border-b border-canvas-softer">
+              <p className="text-sm text-body-text">{TYPE_LABEL[type]}</p>
+              <div className="flex items-center gap-2 mt-1.5 text-sm">
+                {rating !== null && (
+                  <>
+                    <span className="font-semibold text-ink">{rating.toFixed(1)}</span>
+                    <Stars rating={rating} />
+                    <span className="text-mute">·</span>
+                  </>
+                )}
+                <span className="text-body-text">{subtitle}</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Detail rows */}
           <div className="border-b border-canvas-softer">
@@ -143,7 +155,7 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
             {type === 'drivers' && (
               <>
                 <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Picks up from Chowk Bazaar motor stand, Darjeeling</InfoRow>
-                <InfoRow icon={<img src="/route.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.vehicle} · {item.experienceYears} yrs experience</InfoRow>
+                <InfoRow icon={<img src={getVehicleLogo(item.vehicle)} className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.vehicle} · {item.experienceYears} yrs experience</InfoRow>
                 <InfoRow icon={<img src="/language.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Speaks {item.languages?.join(', ')}</InfoRow>
                 {item.routesOperated?.length > 0 && (
                   <InfoRow icon={<img src="/route.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>Operates: {item.routesOperated.join(', ')}</InfoRow>
@@ -154,7 +166,7 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
               <>
                 <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.road}</InfoRow>
                 <InfoRow icon={<img src="/time.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance} · {item.duration}</InfoRow>
-                {item.note && <InfoRow icon={<img src="/verified.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.note}</InfoRow>}
+                {item.note && <InfoRow icon={<img src="/route.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.note}</InfoRow>}
               </>
             )}
             {type === 'cafes' && (
@@ -170,7 +182,7 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
               <>
                 <InfoRow icon={<img src="/location.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.distance}</InfoRow>
                 {item.blurb && <InfoRow icon={<img src="/tags.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.blurb}</InfoRow>}
-                {item.tip && <InfoRow icon={<img src="/verified.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.tip}</InfoRow>}
+                {item.tip && <InfoRow icon={<img src="/tips.svg" className="w-7 h-7 object-contain shrink-0 mt-0.5" alt="" />}>{item.tip}</InfoRow>}
               </>
             )}
             {type === 'offbeat' && (

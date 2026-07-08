@@ -57,7 +57,7 @@ export default function ExperiencesGrid({ items, onSelect }: ExperiencesGridProp
               {/* Local Tip Box */}
               {att.tip && (
                 <div className="flex items-start gap-2 text-xs text-body-text bg-primary/5 p-3 rounded-xl border border-primary/10">
-                  <img src="/verified.svg" className="w-5.5 h-5.5 object-contain shrink-0 mt-0.5" alt="" />
+                  <img src="/tips.svg" className="w-5.5 h-5.5 object-contain shrink-0 mt-0.5" alt="" />
                   <span><strong>Insider Tip:</strong> {att.tip}</span>
                 </div>
               )}
