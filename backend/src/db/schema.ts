@@ -13,8 +13,9 @@ export const users = pgTable('users', {
   // Roles matching the frontend onboardingSchema: 'tourist', 'driver', 'homestay', 'cafe', plus 'provider-pending'
   role: varchar('role', { length: 50 }).default('tourist').notNull(),
   
-  // Unified JSON config for all profile specific details
-  profileConfig: jsonb('profile_config'),
+  // Separate JSON configs for dual-role users
+  touristConfig: jsonb('tourist_config'),
+  providerConfig: jsonb('provider_config'),
   
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });

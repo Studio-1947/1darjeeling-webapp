@@ -20,7 +20,22 @@ export class AuthService {
     return { success: true, message: 'OTP sent successfully', isNewUser: !user };
   }
 
-  async verifyOtp(phone: string, otp: string, name?: string) {
+  async adminLogin(email: string, password: string) {
+    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    
+    if (!user || user.role !== 'admin') {
+      throw new UnauthorizedException('Invalid admin credentials');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      throw new UnauthorizedException('Invalid admin credentials');
+    }
+
+    return this.issueToken(user);
+  }
+
+  async verifyOtp(phone: string, otp: string, name?: string, role: string = 'tourist') {
     // Hardcoded for testing/onboarding
     if (otp !== '123456') {
       throw new UnauthorizedException('Invalid OTP');
@@ -28,7 +43,15 @@ export class AuthService {
 
     let [user] = await db.select().from(users).where(eq(users.phone, phone)).limit(1);
 
-    if (!user) {
+    if (user) {
+      // Existing user: 
+      // If a tourist logs into the provider portal, update their role to provider-pending
+      // so they can set up their business. We don't overwrite if they are already a full provider.
+      if (role === 'provider' && user.role === 'tourist') {
+        const [updated] = await db.update(users).set({ role: 'provider-pending' }).where(eq(users.id, user.id)).returning();
+        user = updated;
+      }
+    } else {
       // Create new user if not exists
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash('random_password_' + Date.now(), salt); // Dummy pass
@@ -42,10 +65,12 @@ export class AuthService {
         lastName = nameParts.slice(1).join(' ') || '';
       }
       
+      const newUserRole = role === 'provider' ? 'provider-pending' : 'tourist';
+      
       const [newUser] = await db.insert(users).values({
         phone,
         passwordHash,
-        role: 'provider-pending',
+        role: newUserRole,
         firstName,
         lastName,
       }).returning();
@@ -60,7 +85,7 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, phone: user.phone, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
-      hasSetup: !!user.profileConfig,
+      hasSetup: !!(user.touristConfig || user.providerConfig),
       profile: {
         id: user.id,
         phone: user.phone,
@@ -68,83 +93,8 @@ export class AuthService {
         role: user.role,
         firstName: user.firstName,
         lastName: user.lastName,
-        profileConfig: user.profileConfig,
-      }
-    };
-  }
-
-  // Legacy register for completeness (or tourist)
-  async register(dto: RegisterDto) {
-    const { email, password, role, firstName, lastName } = dto;
-    
-    // Check if user exists
-    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
-    if (existingUser.length > 0) {
-      throw new BadRequestException('User with this email already exists');
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const [newUser] = await db.insert(users).values({
-      email,
-      passwordHash,
-      role: role || 'tourist',
-      firstName,
-      lastName,
-    }).returning();
-
-    const payload = { sub: newUser.id, email: newUser.email, role: newUser.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-      profile: {
-        id: newUser.id,
-        email: newUser.email,
-        role: newUser.role,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-      }
-    };
-  }
-
-  async validateAndSign(email: string, pass: string, expectedType: 'PROVIDER' | 'USER' = 'USER') {
-    const isDummy = (email === 'test@example.com' && pass === 'password123');
-    let targetRecord: any = null;
-
-    if (isDummy) {
-      targetRecord = { id: `dummy-user`, email, role: 'tourist' };
-    } else {
-      [targetRecord] = await db.select().from(users).where(eq(users.email, email)).limit(1);
-
-      if (!targetRecord) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-
-      const isMatch = await bcrypt.compare(pass, targetRecord.passwordHash);
-      if (!isMatch) {
-        throw new UnauthorizedException('Invalid credentials');
-      }
-    }
-
-    const isProviderRole = ['homestay', 'driver', 'cafe', 'provider-pending'].includes(targetRecord.role);
-
-    if (expectedType === 'PROVIDER' && !isProviderRole) {
-      throw new UnauthorizedException('This account is not a service provider account');
-    }
-    if (expectedType === 'USER' && isProviderRole) {
-      throw new UnauthorizedException('Please login via the provider portal');
-    }
-
-    const payload = { sub: targetRecord.id, email: targetRecord.email, role: targetRecord.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-      hasSetup: !!targetRecord.profileConfig,
-      profile: {
-        id: targetRecord.id,
-        email: targetRecord.email,
-        role: targetRecord.role,
-        firstName: targetRecord.firstName,
-        lastName: targetRecord.lastName,
+        touristConfig: user.touristConfig,
+        providerConfig: user.providerConfig,
       }
     };
   }

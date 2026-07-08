@@ -19,10 +19,14 @@ import DetailSidebar from './components/DetailSidebar';
 import OnboardingModal from './components/onboarding/OnboardingModal';
 import { useOnboardingStore } from './store/onboardingStore';
 import { useLenis } from './hooks/useLenis';
+import { useAuthStore } from './store/authStore';
+import UserAuthModal from './components/UserAuthModal';
 
 export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions' | 'offbeat' | 'food' | 'events' | 'sound';
 
 export default function Home() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -153,6 +157,10 @@ export default function Home() {
   }, [activeTab, searchQuery, dynamicStays, dynamicDrivers]);
 
   const handleOpenDetails = (item: any, type: TabType) => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     setSelectedItem(item);
     setSelectedItemType(type);
   };
@@ -175,18 +183,53 @@ export default function Home() {
 
       <About />
 
-      <CategoryTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onSearchChange={setSearchQuery}
-      />
+      <div className="relative">
+        <CategoryTabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onSearchChange={setSearchQuery}
+        />
 
-      <TabContent
-        activeTab={activeTab}
-        filteredItems={filteredItems}
-        onSelect={handleOpenDetails}
-        searchQuery={searchQuery}
-      />
+        <div className={!isAuthenticated ? "relative max-h-[750px] overflow-hidden" : ""}>
+          <TabContent
+            activeTab={activeTab}
+            filteredItems={!isAuthenticated ? filteredItems.slice(0, 8) : filteredItems}
+            onSelect={handleOpenDetails}
+            searchQuery={searchQuery}
+          />
+          
+          {!isAuthenticated && (
+            <>
+              {/* Smooth Blur Overlay */}
+              <div 
+                className="absolute bottom-0 left-0 right-0 h-96 bg-canvas/30 backdrop-blur-md z-10 pointer-events-none"
+                style={{ 
+                  maskImage: 'linear-gradient(to top, black 40%, transparent 100%)', 
+                  WebkitMaskImage: 'linear-gradient(to top, black 40%, transparent 100%)' 
+                }}
+              />
+              
+              {/* Call to Action Prompt */}
+              <div className="absolute bottom-0 left-0 right-0 h-64 flex items-end justify-center pb-8 z-20 pointer-events-none">
+                <div className="bg-canvas p-8 rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] border border-canvas-softer text-center max-w-md mx-auto mx-4 pointer-events-auto animate-fade-in relative z-30">
+                  <h3 className="text-2xl font-bold text-ink mb-3">Discover Local Services</h3>
+                  <p className="text-body-text mb-6">
+                    Log in or sign up to view all homestays, drivers, cafes, and experiences curated for your trip.
+                  </p>
+                  <button
+                    onClick={() => setShowAuthModal(true)}
+                    className="w-full bg-primary text-canvas py-3 px-6 rounded-xl font-bold transition-opacity hover:opacity-90 cursor-pointer shadow-lg shadow-primary/20"
+                  >
+                    Log in / Sign up to view all
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {showAuthModal && <UserAuthModal onClose={() => setShowAuthModal(false)} />}
 
       {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
 

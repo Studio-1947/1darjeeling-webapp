@@ -9,7 +9,8 @@ export interface UserProfile {
   lastName?: string | null;
   createdAt?: Date;
   role?: string;
-  profileConfig?: any;
+  touristConfig?: any;
+  providerConfig?: any;
 }
 
 export interface HomestayProfile {

@@ -22,12 +22,9 @@ export default function ProviderPortal() {
   // Auto-progress based on auth state
   useEffect(() => {
     if (profile) {
-      if (profile.role === 'provider-pending') {
+      if (profile.role === 'provider-pending' || profile.role === 'tourist') {
         if (step === 1) setStep(2);
       } else if (['homestay', 'driver', 'cafe'].includes(profile.role || '')) {
-        // If they already have a set role and have completed setup
-        // But let's check if they actually have a profile config
-        // The hasSetup flag from login/verify would be better, but we'll assume if they aren't 'provider-pending' they are done.
         navigate('/dashboard');
       }
     }

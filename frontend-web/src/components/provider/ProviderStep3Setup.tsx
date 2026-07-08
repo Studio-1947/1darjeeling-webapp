@@ -48,7 +48,7 @@ export default function ProviderStep3Setup({ role, onSuccess }: ProviderStep3Set
     }
 
     try {
-      const { data } = await api.put(`/auth/provider/${profile.id}/setup`, {
+      const { data } = await api.put(`/auth/${profile.id}/setup`, {
         role,
         profileConfig: config
       });

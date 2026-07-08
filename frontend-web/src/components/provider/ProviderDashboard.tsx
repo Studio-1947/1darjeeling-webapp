@@ -10,7 +10,7 @@ export default function ProviderDashboard() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   
-  const initialConfig = profile?.profileConfig || {};
+  const initialConfig = profile?.providerConfig || {};
   
   // Shared
   const [name, setName] = useState(
@@ -51,7 +51,7 @@ export default function ProviderDashboard() {
     }
 
     try {
-      const { data } = await api.put(`/auth/provider/${profile.id}/setup`, {
+      const { data } = await api.put(`/auth/${profile.id}/setup`, {
         role,
         profileConfig: config
       });
