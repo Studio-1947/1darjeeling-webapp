@@ -15,9 +15,10 @@ interface NavbarProps {
   activeTab: TabType;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  variant?: 'solid' | 'transparent';
 }
 
-export default function Navbar({ activeTab, searchQuery, onSearchChange }: NavbarProps) {
+export default function Navbar({ activeTab, searchQuery, onSearchChange, variant = 'transparent' }: NavbarProps) {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -217,16 +218,18 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
     navigate('/');
   };
 
+  const isSolid = variant === 'solid' || isScrolled;
+
   return (
     <header className={`fixed top-0 left-0 w-full z-40 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4 transition-all duration-300 ${
-      isScrolled 
+      isSolid
         ? 'bg-canvas/95 backdrop-blur-md shadow-sm border-b border-canvas-softer py-3' 
         : 'bg-transparent py-5'
     }`}>
       {/* Airbnb Style Logo */}
       <div className="flex items-center justify-between w-full md:w-auto md:flex-1 md:justify-start">
         <a href="/" className={`flex items-center gap-2.5 font-bold text-2xl tracking-tight transition-colors duration-300 ${
-          isScrolled ? 'text-ink' : 'text-white'
+          isSolid ? 'text-ink' : 'text-white'
         }`}>
           <img src="/logo.png" alt="1darjeeling logo" className="h-8 w-auto object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           <span>1darjeeling</span>
@@ -315,20 +318,25 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
 
       {/* Right Side: Host Link, Language Selector, User Menu */}
       <div className="flex items-center gap-4 mt-2 md:mt-0 md:flex-1 md:justify-end">
-        <a href="http://localhost:5174/register" className={`hidden lg:block text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300 ${
-          isScrolled 
-            ? 'text-ink hover:bg-canvas-soft' 
-            : 'text-white hover:bg-white/10'
-        }`}>
-          Host your stay
-        </a>
+        {/* General User Login / Sign Up - Only show if not authenticated */}
+        {!isAuthenticated && (
+          <button 
+            onClick={() => setShowLoginModal(true)}
+            className={`hidden lg:block text-sm font-bold px-5 py-2.5 rounded-full transition-all duration-300 border bg-transparent cursor-pointer ${
+            isSolid
+              ? 'text-ink border-ink hover:bg-ink hover:text-white' 
+              : 'text-white border-white hover:bg-white hover:text-ink'
+          }`}>
+            Log in / Sign up
+          </button>
+        )}
 
         {/* Language Selector */}
         <div className="relative" ref={langRef}>
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
             className={`flex items-center justify-center p-2.5 rounded-full transition-all duration-300 border-none bg-transparent cursor-pointer ${
-              isScrolled 
+              isSolid
                 ? 'text-ink hover:bg-canvas-soft' 
                 : 'text-white hover:bg-white/15'
             }`}
@@ -371,13 +379,17 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
             {/* User Icon */}
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white overflow-hidden ${isAuthenticated ? 'bg-primary' : 'bg-body-text'}`}>
               {isAuthenticated ? (
-                <span className="text-xs font-bold uppercase">{profile?.email?.charAt(0) || 'U'}</span>
+                <span className="text-xs font-bold uppercase">{profile?.firstName?.charAt(0) || profile?.email?.charAt(0) || 'U'}</span>
               ) : (
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mt-1">
                   <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
                 </svg>
               )}
             </div>
+            
+            {isAuthenticated && profile?.firstName && (
+              <span className="text-sm font-semibold text-ink hidden md:block mr-2">{profile.firstName}</span>
+            )}
           </button>
 
           {isUserOpen && (
@@ -393,19 +405,30 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
                   >
                     Dashboard
                   </button>
-                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                    Trips
-                  </button>
-                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                    Wishlists
-                  </button>
-                  <hr className="border-hairline my-1" />
-                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                    Host your stay
-                  </button>
-                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                    Account
-                  </button>
+                  
+                  {!['homestay', 'driver', 'cafe', 'provider-pending'].includes(profile?.role || '') && (
+                    <>
+                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                        Trips
+                      </button>
+                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                        Wishlists
+                      </button>
+                      <hr className="border-hairline my-1" />
+                      <button 
+                        onClick={() => {
+                          setIsUserOpen(false);
+                          navigate('/partner');
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
+                      >
+                        Partner Log in / Sign up
+                      </button>
+                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                        Account
+                      </button>
+                    </>
+                  )}
                   <hr className="border-hairline my-1" />
                   <button 
                     onClick={handleLogout}
@@ -418,41 +441,12 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange }: Navba
                 <>
                   <button 
                     onClick={() => {
-                      setShowSignupModal(true);
                       setIsUserOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-semibold border-none bg-transparent cursor-pointer text-ink"
-                  >
-                    Sign up
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setShowLoginModal(true);
-                      setIsUserOpen(false);
+                      navigate('/partner');
                     }}
                     className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
                   >
-                    Log in
-                  </button>
-                  <hr className="border-hairline my-1" />
-                  <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                    Host your stay
-                  </button>
-                  <button 
-                    onClick={() => {
-                      window.location.href = 'http://localhost:5174/login';
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
-                  >
-                    Homestay Owner Login
-                  </button>
-                  <button 
-                    onClick={() => {
-                      window.location.href = 'http://localhost:5175/login';
-                    }}
-                    className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink"
-                  >
-                    Driver Partner Login
+                    Partner Log in / Sign up
                   </button>
                   <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
                     Help Center
