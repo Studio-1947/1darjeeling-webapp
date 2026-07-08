@@ -1,6 +1,6 @@
 // backend/src/db/seed.ts
 import { db } from './index.js';
-import { users, homestays, drivers } from './schema.js';
+import { users } from './schema.js';
 import * as bcrypt from 'bcrypt';
 
 async function seed() {
@@ -18,26 +18,35 @@ async function seed() {
       passwordHash,
       firstName: 'Rahul',
       lastName: 'Chettri',
+      role: 'tourist',
     }).onConflictDoNothing();
     console.log('✅ User seeded');
 
     // 2. Seed Homestay Partner
-    await db.insert(homestays).values({
+    await db.insert(users).values({
       email: 'homestay@example.com',
       passwordHash,
-      propertyName: 'Mirik Lake View Retreat',
-      gstNumber: '19AAAAA0000A1Z5',
-      essentialsConfig: { wifi: true, parking: true, breakfast: false },
+      role: 'homestay',
+      profileConfig: { 
+        propertyName: 'Mirik Lake View Retreat',
+        gstNumber: '19AAAAA0000A1Z5',
+        wifi: true, 
+        parking: true, 
+        breakfast: false 
+      },
     }).onConflictDoNothing();
     console.log('✅ Homestay seeded');
 
     // 3. Seed Driver Partner
-    await db.insert(drivers).values({
+    await db.insert(users).values({
       email: 'driver@example.com',
       passwordHash,
-      licenseNumber: 'WB74-2026-9999',
-      vehicleType: 'SUV - Innova',
-      isAvailable: true,
+      role: 'driver',
+      profileConfig: {
+        licenseNumber: 'WB74-2026-9999',
+        vehicleType: 'SUV - Innova',
+        isAvailable: true,
+      }
     }).onConflictDoNothing();
     console.log('✅ Driver seeded');
 

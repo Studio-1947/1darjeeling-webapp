@@ -8,6 +8,8 @@ export interface UserProfile {
   firstName?: string | null;
   lastName?: string | null;
   createdAt?: Date;
+  role?: string;
+  profileConfig?: any;
 }
 
 export interface HomestayProfile {

@@ -1,8 +1,0 @@
-@import "tailwindcss";
-@source "../../shared/src";
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #0F172A;
-}

@@ -33,7 +33,7 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               <span className="font-normal text-xs">★ {driver.rating}</span>
             </div>
             <p className="text-body-text text-xs">{driver.experienceYears} years experience</p>
-            <p className="text-mute text-xs truncate">Speaks: {driver.languages.join(', ')}</p>
+            <p className="text-mute text-xs truncate">Speaks: {driver.languages?.join(', ') || ''}</p>
           </div>
         </div>
       ))}
