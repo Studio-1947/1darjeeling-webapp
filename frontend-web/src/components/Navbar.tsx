@@ -12,7 +12,7 @@ import { cafes } from '../data/cafes';
 import { attractions } from '../data/attractions';
 
 interface NavbarProps {
-  activeTab: TabType;
+  activeTab?: TabType | string;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   variant?: 'solid' | 'transparent';
