@@ -94,7 +94,12 @@ export default function DetailSidebar({ item, type, onClose, onBook }: DetailSid
           {/* Hero header — photo under a primary-tinted gradient with the title overlaid */}
           <div className="relative h-60 shrink-0 overflow-hidden">
             {item.photo ? (
-              <img src={item.photo} alt={title} className="absolute inset-0 h-full w-full object-cover" />
+              <img
+                src={item.photo}
+                alt={title}
+                style={{ objectPosition: item.photoPosition || 'center' }}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark" />
             )}

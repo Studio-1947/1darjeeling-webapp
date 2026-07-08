@@ -70,6 +70,36 @@ export const routes: Route[] = [
     note: "The classic dawn sightseeing circuit, usually shared by 4–6 people in one jeep.",
     photo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNUz52KmrcUxc6JiuNnQ_2jcF3aslKTkyk2q5fezcKez5COLMLMgXRA-Vj&s=10",
   },
+  {
+    id: "darjeeling-kurseong",
+    from: "Darjeeling",
+    to: "Kurseong",
+    distance: "~30 km",
+    duration: "~1.2 hrs",
+    road: "Hill Cart Road",
+    note: "Follows the toy train track through misty pine forests and past the tea gardens of Kurseong.",
+    photo: "https://hblimg.mmtcdn.com/content/hubble/img/tvdestinationimages/mmt/activities/m_Kurseong_tv_destination_img_3_l_667_1000.jpg",
+  },
+  {
+    id: "darjeeling-chatakpur",
+    from: "Darjeeling",
+    to: "Chatakpur",
+    distance: "~26 km",
+    duration: "~1.5 hrs",
+    road: "Via Sonada forest track",
+    note: "A scenic drive passing through the deep pine woods of Senchal Wildlife Sanctuary.",
+    photo: "https://i0.wp.com/www.vibrantfootsteps.com/wp-content/uploads/2022/07/From-the-watch-tower-PS-scaled.jpg?resize=1050%2C788&ssl=1",
+  },
+  {
+    id: "darjeeling-sittong",
+    from: "Darjeeling",
+    to: "Sittong",
+    distance: "~40 km",
+    duration: "~2 hrs",
+    road: "Via Peshok Road",
+    note: "Scenic mountain road leading to the orange orchards of the Sittong valley.",
+    photo: "https://bongtravels.in/wp-content/uploads/2024/11/ahaldhara-sittong.jpg",
+  },
 ];
 
 export interface DriverNote {

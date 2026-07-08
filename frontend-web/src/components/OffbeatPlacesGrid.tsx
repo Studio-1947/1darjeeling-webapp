@@ -80,6 +80,58 @@ const offbeatPlacesData: OffbeatPlace[] = [
     rating: 4.8,
     reviews: 74,
     activities: ['Riverside Camping', 'Organic Farm Visit', 'Tea Tasting']
+  },
+  {
+    name: 'Rimbik',
+    distance: '56 km',
+    time: '3 hours',
+    description: 'A quiet town near the Singalila National Park, famous for its trekker trails, beautiful pine forests, and serene views of the mountain ranges.',
+    tags: ['Trekking Hub', 'Pine Woods', 'Mountain Views'],
+    photo: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+    altitude: '6,500 ft',
+    bestTime: 'Mar - Jun, Oct - Dec',
+    rating: 4.7,
+    reviews: 45,
+    activities: ['Forest Trekking', 'River Valley Walk', 'Local Culture']
+  },
+  {
+    name: 'Lepchajagat',
+    distance: '19 km',
+    time: '45 minutes',
+    description: 'A secluded, peaceful hamlet surrounded by dense oak, fir, and rhododendron forests, offering majestic views of Mount Kanchenjunga.',
+    tags: ['Oak Forests', 'Kanchenjunga', 'Tranquility'],
+    photo: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+    altitude: '6,956 ft',
+    bestTime: 'Oct - Apr',
+    rating: 4.8,
+    reviews: 160,
+    activities: ['Nature Walks', 'Bird Watching', 'Sunset Viewing']
+  },
+  {
+    name: 'Takdah',
+    distance: '28 km',
+    time: '1.5 hours',
+    description: 'A historic cantonment area from the British era, featuring old colonial bungalows, pine paths, and the famous Takdah Orchid Center.',
+    tags: ['Colonial Bungalows', 'Orchid Center', 'Pine Trails'],
+    photo: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+    altitude: '5,100 ft',
+    bestTime: 'Oct - Mar',
+    rating: 4.6,
+    reviews: 72,
+    activities: ['Orchid Garden Visit', 'Bungalow Trail', 'Tea Garden Walk']
+  },
+  {
+    name: 'Mirik',
+    distance: '49 km',
+    time: '2.5 hours',
+    description: 'A picturesque tourist town centered around the serene Sumendu Lake, lined by pine trees and connected by a footbridge.',
+    tags: ['Sumendu Lake', 'Pine Trees', 'Boating'],
+    photo: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Mirik_lake_panorama.jpg',
+    altitude: '4,900 ft',
+    bestTime: 'Sep - Jun',
+    rating: 4.5,
+    reviews: 240,
+    activities: ['Boating', 'Horse Riding', 'Tea Garden Views']
   }
 ];
 
