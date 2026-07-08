@@ -23,18 +23,13 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               <img
                 src={driver.photo}
                 alt={driver.name}
+                style={{ objectPosition: driver.photoPosition || 'center' }}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out grayscale group-hover:grayscale-0"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-primary/10 to-primary/20" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none" />
-
-            {/* Vehicle Type Badge */}
-            <span className="absolute top-4 left-4 bg-white text-ink text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm max-w-[180px] truncate flex items-center gap-1.5 border border-canvas-softer">
-              <img src="/route.svg" className="w-5.5 h-5.5 object-contain shrink-0" alt="" />
-              {driver.vehicle}
-            </span>
 
             {/* Rating Badge */}
             <span className="absolute top-4 right-4 bg-white text-ink text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1 border border-canvas-softer">
@@ -53,7 +48,6 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
           <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">{driver.portrait}</span>
                 <h3 className="text-xl font-bold text-ink group-hover:text-primary transition-colors duration-200">
                   {driver.name}
                 </h3>
@@ -69,6 +63,12 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               <p className="text-xs text-mute font-mono">
                 License: {driver.licenseNumber}
               </p>
+
+              {/* Vehicle Type */}
+              <div className="flex items-start gap-2 text-xs text-body-text">
+                <img src="/route.svg" className="w-5.5 h-5.5 object-contain shrink-0" alt="" />
+                <span><strong>Vehicle:</strong> {driver.vehicle}</span>
+              </div>
 
               {/* Routes Operated */}
               {driver.routesOperated && driver.routesOperated.length > 0 && (
