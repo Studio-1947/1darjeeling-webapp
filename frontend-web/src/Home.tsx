@@ -60,21 +60,25 @@ export default function Home() {
   // Fetch dynamic homestays & drivers
   const [dynamicStays, setDynamicStays] = useState<any[]>([]);
   const [dynamicDrivers, setDynamicDrivers] = useState<any[]>([]);
+  const [dynamicCafes, setDynamicCafes] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchHomestays = async () => {
       try {
         const res = await api.get('/api/homestay/list');
-        const formattedStays = res.data.map((h: any) => ({
-          id: h.id,
-          name: h.propertyName,
-          type: 'Homestay',
-          area: h.essentialsConfig?.location || 'Darjeeling',
-          priceRange: h.essentialsConfig?.basePrice ? `₹${h.essentialsConfig.basePrice} / night` : 'Price on request',
-          blurb: h.essentialsConfig?.amenities?.join(', ') || 'A beautiful homestay.',
-          photo: 'https://images.unsplash.com/photo-1542314831-c6a420325970?auto=format&fit=crop&q=80',
-          isDynamic: true
-        }));
+        const formattedStays = res.data.map((h: any) => {
+          const pConfig = h.providerConfig || {};
+          return {
+            id: h.id,
+            name: pConfig.propertyName || h.name || 'Homestay',
+            type: 'Homestay',
+            area: pConfig.location || 'Darjeeling',
+            priceRange: pConfig.basePrice ? `₹${pConfig.basePrice} / night` : 'Price on request',
+            blurb: pConfig.amenities?.join(', ') || 'A beautiful homestay.',
+            photo: 'https://images.unsplash.com/photo-1542314831-c6a420325970?auto=format&fit=crop&q=80',
+            isDynamic: true
+          };
+        });
         setDynamicStays(formattedStays);
       } catch (err) {
         console.error('Failed to fetch dynamic homestays:', err);
@@ -85,7 +89,7 @@ export default function Home() {
       try {
         const res = await api.get('/api/driver/list');
         const formattedDrivers = res.data.map((d: any) => {
-          const config = d.profileConfig || {};
+          const config = d.providerConfig || {};
           let languages = ['Nepali', 'Hindi'];
           if (config.languages) {
             languages = config.languages.split(',').map((l: string) => l.trim());
@@ -116,8 +120,33 @@ export default function Home() {
       }
     };
     
+    const fetchCafes = async () => {
+      try {
+        const res = await api.get('/api/users/cafes');
+        const formattedCafes = res.data.map((c: any) => {
+          const pConfig = c.providerConfig || {};
+          return {
+            id: c.id,
+            name: pConfig.cafeName || c.name || 'Cafe',
+            area: pConfig.location || 'Darjeeling',
+            type: 'Cafe',
+            specialty: pConfig.bestItem || 'Coffee and Snacks',
+            rating: 5.0,
+            reviews: 0,
+            timing: pConfig.operatingHours || '8 AM - 8 PM',
+            photo: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80',
+            isDynamic: true
+          };
+        });
+        setDynamicCafes(formattedCafes);
+      } catch (err) {
+        console.error('Failed to fetch dynamic cafes:', err);
+      }
+    };
+
     fetchHomestays();
     fetchDrivers();
+    fetchCafes();
   }, []);
 
   // Search Filter
@@ -139,7 +168,8 @@ export default function Home() {
           r => r.from.toLowerCase().includes(query) || r.to.toLowerCase().includes(query)
         );
       case 'cafes':
-        return cafes.filter(
+        const allCafes = [...dynamicCafes, ...cafes];
+        return allCafes.filter(
           c => c.name.toLowerCase().includes(query) || c.area.toLowerCase().includes(query) || c.specialty.toLowerCase().includes(query)
         );
       case 'attractions':

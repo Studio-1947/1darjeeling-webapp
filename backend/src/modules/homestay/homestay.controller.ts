@@ -13,8 +13,8 @@ export class HomestayController {
     const allHomestays = await db.select().from(users).where(eq(users.role, 'homestay'));
     return allHomestays.map(h => ({
       id: h.id,
-      propertyName: (h.profileConfig as any)?.propertyName || h.firstName,
-      profileConfig: h.profileConfig || {},
+      propertyName: (h.providerConfig as any)?.propertyName || h.firstName,
+      providerConfig: h.providerConfig || {},
     }));
   }
 
@@ -29,8 +29,8 @@ export class HomestayController {
     return {
       id: homestay.id,
       email: homestay.email,
-      propertyName: (homestay.profileConfig as any)?.propertyName || homestay.firstName,
-      profileConfig: homestay.profileConfig || {},
+      propertyName: (homestay.providerConfig as any)?.propertyName || homestay.firstName,
+      providerConfig: homestay.providerConfig || {},
     };
   }
 
@@ -42,8 +42,8 @@ export class HomestayController {
     }
     return {
       id: homestay.id,
-      propertyName: (homestay.profileConfig as any)?.propertyName || homestay.firstName,
-      profileConfig: homestay.profileConfig || {},
+      propertyName: (homestay.providerConfig as any)?.propertyName || homestay.firstName,
+      providerConfig: homestay.providerConfig || {},
     };
   }
 
@@ -52,7 +52,7 @@ export class HomestayController {
   @SetMetadata('roles', ['HOMESTAY', 'homestay'])
   async saveSetup(@Param('id') id: string, @Body() config: any) {
     await db.update(users)
-      .set({ profileConfig: config })
+      .set({ providerConfig: config })
       .where(eq(users.id, id));
     return { message: "Setup completed successfully." };
   }

@@ -408,12 +408,16 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
                   
                   {profile?.role !== 'admin' && (
                     <>
-                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                        Trips
-                      </button>
-                      <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
-                        Wishlists
-                      </button>
+                      {(!['homestay', 'driver', 'cafe', 'provider-pending'].includes(profile?.role || '') && !(profile?.providerConfig && Object.keys(profile.providerConfig).length > 0)) && (
+                        <>
+                          <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                            Trips
+                          </button>
+                          <button className="w-full text-left px-4 py-2.5 text-sm hover:bg-canvas-soft font-medium border-none bg-transparent cursor-pointer text-ink">
+                            Wishlists
+                          </button>
+                        </>
+                      )}
                       <hr className="border-hairline my-1" />
                       <button 
                         onClick={() => {
