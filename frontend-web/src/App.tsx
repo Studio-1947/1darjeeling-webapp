@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import HomestayView from './pages/HomestayView';
+import StayDetailPage from './pages/StayDetailPage';
 import ProviderPortal from './pages/ProviderPortal';
 
 import Dashboard from './pages/Dashboard';
@@ -17,6 +18,9 @@ export default function App() {
         
         {/* Public Route - Homestay View */}
         <Route path="/homestay/:id" element={<HomestayView />} />
+
+        {/* Public Route - Detailed Stay View */}
+        <Route path="/stay/:id" element={<StayDetailPage />} />
         
         {/* Public Route - Provider Registration */}
         <Route path="/partner" element={<ProviderPortal />} />

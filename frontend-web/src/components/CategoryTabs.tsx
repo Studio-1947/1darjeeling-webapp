@@ -28,7 +28,7 @@ export default function CategoryTabs({ activeTab, onTabChange, onSearchChange }:
             onTabChange(tab.id);
             onSearchChange('');
           }}
-          className={`flex flex-col items-center gap-3 pb-2.5 border-b-2 text-sm font-semibold whitespace-nowrap transition-all outline-none cursor-pointer ${
+          className={`flex-1 min-w-[120px] flex flex-col items-center gap-3 pb-2.5 border-b-2 text-sm font-semibold whitespace-nowrap transition-all outline-none cursor-pointer ${
             activeTab === tab.id
               ? 'border-ink text-ink'
               : 'border-transparent text-body-text hover:text-ink hover:border-canvas-softer'

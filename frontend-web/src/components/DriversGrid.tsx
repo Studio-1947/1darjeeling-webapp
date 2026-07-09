@@ -78,10 +78,10 @@ export default function DriversGrid({ items, onSelect }: DriversGridProps) {
               <div className="flex items-center gap-2 text-xs text-body-text">
                 <img 
                   src={getVehicleLogo(driver.vehicle)} 
-                  className={`${driver.vehicle.toLowerCase().includes('land rover') ? 'w-9.5 h-7.5' : 'w-7.5 h-7.5'} object-contain shrink-0`} 
+                  className={`${(driver.vehicle || '').toLowerCase().includes('land rover') ? 'w-9.5 h-7.5' : 'w-7.5 h-7.5'} object-contain shrink-0`} 
                   alt="" 
                 />
-                <span> {driver.vehicle}</span>
+                <span> {driver.vehicle || 'Not Specified'}</span>
               </div>
 
               {/* Routes Operated  */}
