@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from './api/client';
 import { stays } from './data/stays';
 import { drivers } from './data/drivers';
@@ -16,34 +17,21 @@ import Footer from './components/Footer';
 import Faq from './components/Faq';
 import BookingModal from './components/BookingModal';
 import DetailSidebar from './components/DetailSidebar';
-import OnboardingModal from './components/onboarding/OnboardingModal';
-import { useOnboardingStore } from './store/onboardingStore';
 import { useLenis } from './hooks/useLenis';
 import { useAuthStore } from './store/authStore';
 import UserAuthModal from './components/UserAuthModal';
+import MobileHome from './components/mobile/MobileHome';
 
 export type TabType = 'stays' | 'drivers' | 'routes' | 'cafes' | 'attractions' | 'offbeat' | 'food' | 'events' | 'sound';
 
 export default function Home() {
+  const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('stays');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // First-visit onboarding questionnaire.
-  // `?onboarding=1` forces it open; `?onboarding=reset` also wipes any saved answers.
-  const onboardingStatus = useOnboardingStore((s) => s.status);
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    const param = new URLSearchParams(window.location.search).get('onboarding');
-    if (param === 'reset') {
-      useOnboardingStore.getState().reset();
-      return true;
-    }
-    return onboardingStatus === 'incomplete' || param !== null;
-  });
-
-  // Freeze page scrolling while the questionnaire is open.
-  useLenis(showOnboarding);
+  useLenis(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -156,25 +144,25 @@ export default function Home() {
       case 'stays':
         const allStays = [...dynamicStays, ...stays];
         return allStays.filter(
-          s => s.name.toLowerCase().includes(query) || s.area.toLowerCase().includes(query) || s.type.toLowerCase().includes(query)
+          s => (s.name || '').toLowerCase().includes(query) || (s.area || '').toLowerCase().includes(query) || (s.type || '').toLowerCase().includes(query)
         );
       case 'drivers':
         const allDrivers = [...dynamicDrivers, ...drivers];
         return allDrivers.filter(
-          d => d.name.toLowerCase().includes(query) || d.vehicle.toLowerCase().includes(query)
+          d => (d.name || '').toLowerCase().includes(query) || (d.vehicle || '').toLowerCase().includes(query)
         );
       case 'routes':
         return routes.filter(
-          r => r.from.toLowerCase().includes(query) || r.to.toLowerCase().includes(query)
+          r => (r.from || '').toLowerCase().includes(query) || (r.to || '').toLowerCase().includes(query)
         );
       case 'cafes':
         const allCafes = [...dynamicCafes, ...cafes];
         return allCafes.filter(
-          c => c.name.toLowerCase().includes(query) || c.area.toLowerCase().includes(query) || c.specialty.toLowerCase().includes(query)
+          c => (c.name || '').toLowerCase().includes(query) || (c.area || '').toLowerCase().includes(query) || (c.specialty || '').toLowerCase().includes(query)
         );
       case 'attractions':
         return attractions.filter(
-          a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query)
+          a => (a.name || '').toLowerCase().includes(query) || (a.category || '').toLowerCase().includes(query)
         );
       case 'offbeat':
       case 'food':
@@ -184,11 +172,15 @@ export default function Home() {
       default:
         return [];
     }
-  }, [activeTab, searchQuery, dynamicStays, dynamicDrivers]);
+  }, [activeTab, searchQuery, dynamicStays, dynamicDrivers, dynamicCafes]);
 
   const handleOpenDetails = (item: any, type: TabType) => {
     if (!isAuthenticated) {
       setShowAuthModal(true);
+      return;
+    }
+    if (type === 'stays') {
+      navigate(`/stay/${item.id}`);
       return;
     }
     setSelectedItem(item);
@@ -202,7 +194,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-ink selection:bg-primary selection:text-canvas relative overflow-x-hidden">
+    <>
+    {/* Mobile-only experience (below md). Desktop is untouched. */}
+    <div className="md:hidden">
+      <MobileHome />
+    </div>
+
+    {/* Desktop / tablet experience */}
+    <div className="hidden md:block min-h-screen bg-canvas text-ink selection:bg-primary selection:text-canvas relative overflow-x-hidden">
       <Navbar
         activeTab={activeTab}
         searchQuery={searchQuery}
@@ -261,8 +260,6 @@ export default function Home() {
 
       {showAuthModal && <UserAuthModal onClose={() => setShowAuthModal(false)} />}
 
-      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
-
       {selectedItem && selectedItemType && (
         <DetailSidebar
           item={selectedItem}
@@ -283,5 +280,6 @@ export default function Home() {
       <Faq />
       <Footer />
     </div>
+    </>
   );
 }

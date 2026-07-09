@@ -36,7 +36,7 @@ export const stays: Stay[] = [
     area: "Working garden, 20 min from town",
     priceRange: "₹3,500–5,000 / night",
     blurb:
-      "A former manager's bungalow on an active tea estate. Wake up to the plucking shift starting in the rows below your window.",
+      "Active tea garden views, historic manager's bungalow, traditional fireplace rooms, and guided estate walks.",
     photo: "https://media-cdn.tripadvisor.com/media/photo-s/2d/96/59/00/caption.jpg",
   },
   {
@@ -75,7 +75,7 @@ export const stays: Stay[] = [
     type: "Homestay",
     area: "Ghoom",
     priceRange: "₹1,500–2,200 / night",
-    blurb: "A quiet retreat located near the Ghoom Monastery. Features traditional wooden interiors and home-cooked organic meals.",
+    blurb: "Near Ghoom Monastery, traditional wooden interiors, home-cooked organic meals, and mountain view terrace.",
     photo: "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?auto=format&fit=crop&w=800&q=80",
   },
   {

@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
       <video
-        src="https://res.cloudinary.com/drgb8w8ak/video/upload/v1782909033/focus_o5eoxi.mp4"
+        src="https://res.cloudinary.com/drgb8w8ak/video/upload/v1783579758/S_47_July_26_web_cover_video_e1wiyd.mp4"
         autoPlay
         loop
         muted

@@ -124,7 +124,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
           ...stays.map(s => ({ name: s.name, area: s.area, type: s.type }))
         ];
         return allStays
-          .filter(s => s.name.toLowerCase().includes(query) || s.area.toLowerCase().includes(query))
+          .filter(s => (s.name || '').toLowerCase().includes(query) || (s.area || '').toLowerCase().includes(query))
           .map(s => ({
             title: s.name,
             subtitle: `${s.type} • ${s.area}`,
@@ -138,7 +138,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
           ...drivers.map(d => ({ name: d.name, vehicle: d.vehicle }))
         ];
         return allDrivers
-          .filter(d => d.name.toLowerCase().includes(query) || d.vehicle.toLowerCase().includes(query))
+          .filter(d => (d.name || '').toLowerCase().includes(query) || (d.vehicle || '').toLowerCase().includes(query))
           .map(d => ({
             title: d.name,
             subtitle: d.vehicle,
@@ -148,7 +148,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
       }
       case 'routes': {
         return routes
-          .filter(r => r.from.toLowerCase().includes(query) || r.to.toLowerCase().includes(query))
+          .filter(r => (r.from || '').toLowerCase().includes(query) || (r.to || '').toLowerCase().includes(query))
           .map(r => ({
             title: `${r.from} to ${r.to}`,
             subtitle: `${r.distance} • ${r.duration}`,
@@ -158,7 +158,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
       }
       case 'cafes': {
         return cafes
-          .filter(c => c.name.toLowerCase().includes(query) || c.area.toLowerCase().includes(query) || c.specialty.toLowerCase().includes(query))
+          .filter(c => (c.name || '').toLowerCase().includes(query) || (c.area || '').toLowerCase().includes(query) || (c.specialty || '').toLowerCase().includes(query))
           .map(c => ({
             title: c.name,
             subtitle: `${c.specialty} • ${c.area}`,
@@ -168,7 +168,7 @@ export default function Navbar({ activeTab, searchQuery, onSearchChange, variant
       }
       case 'attractions': {
         return attractions
-          .filter(a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query))
+          .filter(a => (a.name || '').toLowerCase().includes(query) || (a.category || '').toLowerCase().includes(query))
           .map(a => ({
             title: a.name,
             subtitle: a.category,
