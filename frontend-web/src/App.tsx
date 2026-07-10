@@ -7,6 +7,7 @@ import PlaceDetailPage from './pages/PlaceDetailPage';
 import FoodCulturePage from './pages/FoodCulturePage';
 import FoodItemDetailPage from './pages/FoodItemDetailPage';
 import ProviderPortal from './pages/ProviderPortal';
+import ScrollToTop from './components/ScrollToTop';
 
 import Dashboard from './pages/Dashboard';
 
@@ -15,6 +16,7 @@ import AdminPortal from './pages/AdminPortal';
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         {/* Public Route - The main landing page */}
         <Route path="/" element={<Home />} />
