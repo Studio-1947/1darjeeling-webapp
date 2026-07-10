@@ -6,6 +6,7 @@ import { drivers } from './data/drivers';
 import { routes } from './data/routes';
 import { cafes } from './data/cafes';
 import { attractions } from './data/attractions';
+import { offbeatSlug } from './data/offbeat';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import Navbar from './components/Navbar';
@@ -179,8 +180,21 @@ export default function Home() {
       setShowAuthModal(true);
       return;
     }
+    // Full-page parallax detail routes. Drivers and routes keep the sidebar.
     if (type === 'stays') {
       navigate(`/stay/${item.id}`);
+      return;
+    }
+    if (type === 'cafes') {
+      navigate(`/cafe/${item.id}`, { state: { item } });
+      return;
+    }
+    if (type === 'attractions') {
+      navigate(`/experience/${item.id}`, { state: { item } });
+      return;
+    }
+    if (type === 'offbeat') {
+      navigate(`/offbeat/${offbeatSlug(item.name)}`, { state: { item } });
       return;
     }
     setSelectedItem(item);
